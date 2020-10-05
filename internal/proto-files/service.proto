@@ -4,12 +4,7 @@ option go_package = "KeyRing/internal/grpc/service";
 
 
 service KeyHookService {
-    rpc AddUser (CreateUserRequest) returns (UserResponse);
     rpc DeleteUser (DeleteUserRequest) returns (UserResponse);
-}
-
-message CreateUserRequest {
-    int64 id = 1;
 }
 
 message DeleteUserRequest {

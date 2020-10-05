@@ -18,14 +18,6 @@ func NewServiceGrpcImpl() *ServiceGrpcImpl {
 	return &ServiceGrpcImpl{}
 }
 
-func (serviceImpl *ServiceGrpcImpl) AddUser(ctx context.Context,
-	in *service.CreateUserRequest) (*service.UserResponse, error) {
-	fmt.Printf("You've created User with Id %d\n", in.Id)
-	return &service.UserResponse{
-		Error: "",
-	}, nil
-}
-
 // DeleteUser will go through the database and delete all event assoicated with that user
 // The message that is sent from the account service will contain the id related to the user
 func (serviceImpl *ServiceGrpcImpl) DeleteUser(ctx context.Context,

@@ -6,7 +6,9 @@ import (
 	"github.com/Wilder60/KeyRing/security"
 )
 
-func authorize(next http.Handler) http.Handler {
+// Authorize will check the authorization for a given request, this will check if they just have a valid token
+// not if they are an adminstrator, that will be handed by the AuthorizeAdmin function
+func Authorize(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		token := r.Header.Get("Authorization")
 		if err := security.Validate(token); err != nil {

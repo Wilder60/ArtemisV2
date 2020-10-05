@@ -7,7 +7,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-type Config struct {
+type config struct {
 	Server struct {
 		Port string `yaml:"Port"`
 	}
@@ -16,23 +16,23 @@ type Config struct {
 	}
 }
 
-var conf *Config
+var conf *config
 
 // Get will initalize the conf if it is unitalized
-func Get() *Config {
+func Get() *config {
 	if conf != nil {
 		conf = new()
 	}
 	return conf
 }
 
-func new() *Config {
+func new() *config {
 	path := os.Args[1]
 	file, err := ioutil.ReadFile(path)
 	if err != nil {
 		panic(err)
 	}
-	c := &Config{}
+	c := &config{}
 	err = yaml.Unmarshal(file, c)
 	if err != nil {
 		panic(err)

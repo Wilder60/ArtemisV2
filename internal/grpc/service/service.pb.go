@@ -29,53 +29,6 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
-type CreateUserRequest struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-}
-
-func (x *CreateUserRequest) Reset() {
-	*x = CreateUserRequest{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_KeyRing_internal_proto_files_service_proto_msgTypes[0]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CreateUserRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateUserRequest) ProtoMessage() {}
-
-func (x *CreateUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_KeyRing_internal_proto_files_service_proto_msgTypes[0]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateUserRequest.ProtoReflect.Descriptor instead.
-func (*CreateUserRequest) Descriptor() ([]byte, []int) {
-	return file_KeyRing_internal_proto_files_service_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *CreateUserRequest) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
 type DeleteUserRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -87,7 +40,7 @@ type DeleteUserRequest struct {
 func (x *DeleteUserRequest) Reset() {
 	*x = DeleteUserRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_KeyRing_internal_proto_files_service_proto_msgTypes[1]
+		mi := &file_KeyRing_internal_proto_files_service_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -100,7 +53,7 @@ func (x *DeleteUserRequest) String() string {
 func (*DeleteUserRequest) ProtoMessage() {}
 
 func (x *DeleteUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_KeyRing_internal_proto_files_service_proto_msgTypes[1]
+	mi := &file_KeyRing_internal_proto_files_service_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -113,7 +66,7 @@ func (x *DeleteUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteUserRequest.ProtoReflect.Descriptor instead.
 func (*DeleteUserRequest) Descriptor() ([]byte, []int) {
-	return file_KeyRing_internal_proto_files_service_proto_rawDescGZIP(), []int{1}
+	return file_KeyRing_internal_proto_files_service_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *DeleteUserRequest) GetId() int64 {
@@ -134,7 +87,7 @@ type UserResponse struct {
 func (x *UserResponse) Reset() {
 	*x = UserResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_KeyRing_internal_proto_files_service_proto_msgTypes[2]
+		mi := &file_KeyRing_internal_proto_files_service_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -147,7 +100,7 @@ func (x *UserResponse) String() string {
 func (*UserResponse) ProtoMessage() {}
 
 func (x *UserResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_KeyRing_internal_proto_files_service_proto_msgTypes[2]
+	mi := &file_KeyRing_internal_proto_files_service_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -160,7 +113,7 @@ func (x *UserResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserResponse.ProtoReflect.Descriptor instead.
 func (*UserResponse) Descriptor() ([]byte, []int) {
-	return file_KeyRing_internal_proto_files_service_proto_rawDescGZIP(), []int{2}
+	return file_KeyRing_internal_proto_files_service_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *UserResponse) GetError() string {
@@ -176,23 +129,18 @@ var file_KeyRing_internal_proto_files_service_proto_rawDesc = []byte{
 	0x0a, 0x2a, 0x4b, 0x65, 0x79, 0x52, 0x69, 0x6e, 0x67, 0x2f, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x6e,
 	0x61, 0x6c, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2d, 0x66, 0x69, 0x6c, 0x65, 0x73, 0x2f, 0x73,
 	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x23, 0x0a, 0x11,
-	0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
 	0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x69,
-	0x64, 0x22, 0x23, 0x0a, 0x11, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x55, 0x73, 0x65, 0x72, 0x52,
-	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01,
-	0x28, 0x03, 0x52, 0x02, 0x69, 0x64, 0x22, 0x24, 0x0a, 0x0c, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65,
-	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x32, 0x6f, 0x0a, 0x0e,
-	0x4b, 0x65, 0x79, 0x48, 0x6f, 0x6f, 0x6b, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x2c,
-	0x0a, 0x07, 0x41, 0x64, 0x64, 0x55, 0x73, 0x65, 0x72, 0x12, 0x12, 0x2e, 0x43, 0x72, 0x65, 0x61,
-	0x74, 0x65, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x0d, 0x2e,
-	0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x2f, 0x0a, 0x0a,
-	0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x55, 0x73, 0x65, 0x72, 0x12, 0x12, 0x2e, 0x44, 0x65, 0x6c,
-	0x65, 0x74, 0x65, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x0d,
-	0x2e, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42, 0x1f, 0x5a,
-	0x1d, 0x4b, 0x65, 0x79, 0x52, 0x69, 0x6e, 0x67, 0x2f, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x6e, 0x61,
-	0x6c, 0x2f, 0x67, 0x72, 0x70, 0x63, 0x2f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x62, 0x06,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x64, 0x22, 0x24, 0x0a, 0x0c, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x12, 0x14, 0x0a, 0x05, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x05, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x32, 0x41, 0x0a, 0x0e, 0x4b, 0x65, 0x79, 0x48, 0x6f,
+	0x6f, 0x6b, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x2f, 0x0a, 0x0a, 0x44, 0x65, 0x6c,
+	0x65, 0x74, 0x65, 0x55, 0x73, 0x65, 0x72, 0x12, 0x12, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65,
+	0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x0d, 0x2e, 0x55, 0x73,
+	0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42, 0x1f, 0x5a, 0x1d, 0x4b, 0x65,
+	0x79, 0x52, 0x69, 0x6e, 0x67, 0x2f, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x2f, 0x67,
+	0x72, 0x70, 0x63, 0x2f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x33,
 }
 
 var (
@@ -207,19 +155,16 @@ func file_KeyRing_internal_proto_files_service_proto_rawDescGZIP() []byte {
 	return file_KeyRing_internal_proto_files_service_proto_rawDescData
 }
 
-var file_KeyRing_internal_proto_files_service_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_KeyRing_internal_proto_files_service_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_KeyRing_internal_proto_files_service_proto_goTypes = []interface{}{
-	(*CreateUserRequest)(nil), // 0: CreateUserRequest
-	(*DeleteUserRequest)(nil), // 1: DeleteUserRequest
-	(*UserResponse)(nil),      // 2: UserResponse
+	(*DeleteUserRequest)(nil), // 0: DeleteUserRequest
+	(*UserResponse)(nil),      // 1: UserResponse
 }
 var file_KeyRing_internal_proto_files_service_proto_depIdxs = []int32{
-	0, // 0: KeyHookService.AddUser:input_type -> CreateUserRequest
-	1, // 1: KeyHookService.DeleteUser:input_type -> DeleteUserRequest
-	2, // 2: KeyHookService.AddUser:output_type -> UserResponse
-	2, // 3: KeyHookService.DeleteUser:output_type -> UserResponse
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
+	0, // 0: KeyHookService.DeleteUser:input_type -> DeleteUserRequest
+	1, // 1: KeyHookService.DeleteUser:output_type -> UserResponse
+	1, // [1:2] is the sub-list for method output_type
+	0, // [0:1] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -232,18 +177,6 @@ func file_KeyRing_internal_proto_files_service_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_KeyRing_internal_proto_files_service_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateUserRequest); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_KeyRing_internal_proto_files_service_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteUserRequest); i {
 			case 0:
 				return &v.state
@@ -255,7 +188,7 @@ func file_KeyRing_internal_proto_files_service_proto_init() {
 				return nil
 			}
 		}
-		file_KeyRing_internal_proto_files_service_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+		file_KeyRing_internal_proto_files_service_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UserResponse); i {
 			case 0:
 				return &v.state
@@ -274,7 +207,7 @@ func file_KeyRing_internal_proto_files_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_KeyRing_internal_proto_files_service_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -300,7 +233,6 @@ const _ = grpc.SupportPackageIsVersion6
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type KeyHookServiceClient interface {
-	AddUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*UserResponse, error)
 	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*UserResponse, error)
 }
 
@@ -310,15 +242,6 @@ type keyHookServiceClient struct {
 
 func NewKeyHookServiceClient(cc grpc.ClientConnInterface) KeyHookServiceClient {
 	return &keyHookServiceClient{cc}
-}
-
-func (c *keyHookServiceClient) AddUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*UserResponse, error) {
-	out := new(UserResponse)
-	err := c.cc.Invoke(ctx, "/KeyHookService/AddUser", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *keyHookServiceClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*UserResponse, error) {
@@ -332,7 +255,6 @@ func (c *keyHookServiceClient) DeleteUser(ctx context.Context, in *DeleteUserReq
 
 // KeyHookServiceServer is the server API for KeyHookService service.
 type KeyHookServiceServer interface {
-	AddUser(context.Context, *CreateUserRequest) (*UserResponse, error)
 	DeleteUser(context.Context, *DeleteUserRequest) (*UserResponse, error)
 }
 
@@ -340,33 +262,12 @@ type KeyHookServiceServer interface {
 type UnimplementedKeyHookServiceServer struct {
 }
 
-func (*UnimplementedKeyHookServiceServer) AddUser(context.Context, *CreateUserRequest) (*UserResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddUser not implemented")
-}
 func (*UnimplementedKeyHookServiceServer) DeleteUser(context.Context, *DeleteUserRequest) (*UserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
 }
 
 func RegisterKeyHookServiceServer(s *grpc.Server, srv KeyHookServiceServer) {
 	s.RegisterService(&_KeyHookService_serviceDesc, srv)
-}
-
-func _KeyHookService_AddUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateUserRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(KeyHookServiceServer).AddUser(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/KeyHookService/AddUser",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KeyHookServiceServer).AddUser(ctx, req.(*CreateUserRequest))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _KeyHookService_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -391,10 +292,6 @@ var _KeyHookService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "KeyHookService",
 	HandlerType: (*KeyHookServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "AddUser",
-			Handler:    _KeyHookService_AddUser_Handler,
-		},
 		{
 			MethodName: "DeleteUser",
 			Handler:    _KeyHookService_DeleteUser_Handler,
