@@ -7,15 +7,18 @@ RUN go mod download
 
 COPY . .
 
+WORKDIR /KeyRing/test
 RUN go test -v
-RUN go build ./cmd/main.go
+
+WORKDIR /KeyRing/cmd
+RUN go build -o ./KeyRing.exe
 
 
 FROM alpine:latest
 
-COPY --from=build_stage ./main.exe .
+COPY --from=build_stage ./KeyRing.exe .
 COPY --from=build_stage ./config.yaml .
 
 EXPOSE 8080
 
-CMD ["./main.exe", "./config.yaml"]
+CMD ["./KeyRing.exe", "./config.yaml"]

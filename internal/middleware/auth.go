@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/Wilder60/KeyRing/security"
+	"github.com/Wilder60/KeyRing/internal/security"
 )
 
 // Authorize will check the authorization for a given request, this will check if they just have a valid token

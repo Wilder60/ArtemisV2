@@ -3,29 +3,27 @@ package main
 import (
 	"fmt"
 	"log"
-	"net"
+	"net/http"
+	"time"
 
-	"github.com/Wilder60/KeyRing/adpater"
-	"github.com/Wilder60/KeyRing/internal/grpc/service"
+	"github.com/Wilder60/KeyRing/internal/sql"
 
-	"google.golang.org/grpc"
+	"github.com/Wilder60/KeyRing/internal/adapter"
 )
 
-func getNetListener(port uint) net.Listener {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
-	if err != nil {
-		log.Fatal("failed to listen:" + err.Error())
-		panic(fmt.Sprintf("failed to listen: %s", err.Error()))
+func main() {
+
+	sqlDriver := sql.New()
+
+	srv := &http.Server{
+		Handler:      adapter.NewWebAdapter(&sqlDriver),
+		Addr:         "127.0.0.1:8000",
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
 	}
 
-	return lis
-}
+	fmt.Println("Starting server")
 
-func main() {
-	netListener := getNetListener(7000)
-	gRPCServer := grpc.NewServer()
-
-	serviceImpl := adpater.NewServiceGrpcImpl()
-	service.RegisterKeyHookServiceServer(gRPCServer, serviceImpl)
+	log.Fatal(srv.ListenAndServe())
 
 }
