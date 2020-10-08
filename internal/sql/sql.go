@@ -7,7 +7,6 @@ import (
 	_ "github.com/GoogleCloudPlatform/cloudsql-proxy/proxy/dialers/postgres"
 	"github.com/Wilder60/KeyRing/configs"
 	"github.com/Wilder60/KeyRing/internal/domain"
-	"github.com/google/uuid"
 )
 
 const fmtStr = "host=%s:%s:%s user=%s dbname=%s password=%s sslmode=disable"
@@ -35,7 +34,7 @@ func New() SQL {
 	}
 
 	s := SQL{db}
-	err = s.initTable(db)
+	err = s.initTable()
 	return SQL{db}
 }
 
@@ -45,7 +44,7 @@ func (s *SQL) Close() error {
 
 // GetKeyRing will take the id from the user how is spending a request
 // limit and offest are used for pagination
-func (s *SQL) GetKeyRing(id uuid.UUID, limit int64, offest int64) ([]domain.KeyEntry, error) {
+func (s *SQL) GetKeyRing(id string, limit int64, offest int64) ([]domain.KeyEntry, error) {
 	var pagedData []domain.KeyEntry = []domain.KeyEntry{}
 
 	err := s.withTransaction(func(tx *sql.Tx) error {
@@ -84,20 +83,21 @@ func (s *SQL) AddKeyRing(entry domain.KeyEntry) (int64, error) {
 			entry.Notes,
 			entry.Favorite,
 		)
-		if err != nil{
-			return 
+		if err != nil {
+			return
 		}
-		rows, err = insertResult.LastInsertId()
-		return 
+		rows, err = insertResult.RowsAffected()
+		return
 	})
 
 	return rows, err
 }
 
+// UpdateKeyRing will take a KeyEntry
 func (s *SQL) UpdateKeyRing(entry domain.KeyEntry) (int64, error) {
 	var updateRow int64
 
-	err := s.withTransaction(func(tx *sql.Tx) error {
+	err := s.withTransaction(func(tx *sql.Tx) (err error) {
 		updateResult, err := tx.Exec(updateKeyEntry,
 			entry.URL,
 			entry.Username,
@@ -109,15 +109,19 @@ func (s *SQL) UpdateKeyRing(entry domain.KeyEntry) (int64, error) {
 			entry.ID,
 			entry.UserID,
 		)
-		if err != nil 
-		updateResult.RowsAffected()
-		return nil
+		if err != nil {
+			return
+		}
+		updateRow, err = updateResult.RowsAffected()
+		return
 	})
 
 	return updateRow, err
 }
 
-func (s *SQL) DeleteKeyRing(int64) (int64, error) {
+func (s *SQL) DeleteKeyRing(eventID string) (int64, error) {
+	// var rowDeleted int64
+
 	err := s.withTransaction(func(tx *sql.Tx) error {
 		return nil
 	})
@@ -125,7 +129,7 @@ func (s *SQL) DeleteKeyRing(int64) (int64, error) {
 	return 0, err
 }
 
-func (s *SQL) initTable(db *sql.DB) error {
+func (s *SQL) initTable() error {
 	err := s.withTransaction(func(tx *sql.Tx) error {
 		var err error
 		_, err = tx.Exec(createExtension)
