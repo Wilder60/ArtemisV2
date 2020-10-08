@@ -1,10 +1,13 @@
 package interfaces
 
-import "github.com/Wilder60/KeyRing/internal/domain"
+import (
+	"github.com/Wilder60/KeyRing/internal/domain"
+	"github.com/google/uuid"
+)
 
 type Database interface {
-	GetKeyRing() []domain.KeyEntry
-	AddKeyRing(domain.KeyEntry) int64
-	UpdateKeyRing(domain.KeyEntry) int64
-	DeleteKeyRing(int64) int64
+	GetKeyRing(uuid.UUID, int64, int64) ([]domain.KeyEntry, error)
+	AddKeyRing(domain.KeyEntry) (int64, error)
+	UpdateKeyRing(domain.KeyEntry) (int64, error)
+	DeleteKeyRing(int64) (int64, error)
 }
