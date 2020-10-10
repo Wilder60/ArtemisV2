@@ -1,7 +1,6 @@
 package configs
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 
@@ -40,7 +39,6 @@ func Get() *config {
 func new() *config {
 	path := os.Args[1]
 	file, err := ioutil.ReadFile(path)
-	fmt.Println(string(file))
 	if err != nil {
 		panic(err)
 	}

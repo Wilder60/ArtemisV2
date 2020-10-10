@@ -24,4 +24,6 @@ const (
 	updateKeyEntry = `UPDATE keyring
 	SET Url = $1, Username = $2, Sitename = $3, Sitepassword = $4, Folder = $5, Notes = $6, Favorite = $7
 	WHERE Id == $8 AND Userid == $9`
+
+	deleteKeyEntry = `DELETE FROM keyring WHERE Id == $1`
 )

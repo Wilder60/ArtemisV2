@@ -9,7 +9,7 @@ This project is mostly being used for me to learn different DevOps and cloud tec
 ## EndPoints ##
 
 * /keyring
-  * Get 
+  * Get
   * Post
   * Patch
   * Delete

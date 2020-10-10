@@ -66,6 +66,9 @@ func (kr keyRing) addEvent(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
+
+	r.Header.Get("Authorization")
+
 	ret, err := kr.AddKeyRing(event)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

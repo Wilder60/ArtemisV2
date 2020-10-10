@@ -4,11 +4,15 @@ import (
 	"errors"
 	"time"
 
+	"github.com/Wilder60/KeyRing/configs"
+
 	"github.com/dgrijalva/jwt-go"
 )
 
+var ErrInvalidToken = errors.New("Token is not valid")
+
 type Claims struct {
-	Username string
+	UserID string
 	jwt.StandardClaims
 }
 
@@ -32,7 +36,7 @@ type StandardClaims struct {
 func CreateToken(username string) (string, error) {
 	now := time.Now()
 	claims := Claims{
-		Username: username,
+		UserID: username,
 		StandardClaims: jwt.StandardClaims{
 			IssuedAt:  now.Add(5 * time.Minute).Unix(),
 			ExpiresAt: now.Unix(),
@@ -41,7 +45,8 @@ func CreateToken(username string) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	signedToken, err := token.SignedString("123ewfasdgarga")
+	cfg := configs.Get()
+	signedToken, err := token.SignedString(cfg.Security.SecretKey)
 	if err != nil {
 		return "", err
 	}
@@ -52,14 +57,29 @@ func CreateToken(username string) (string, error) {
 func Validate(token string) error {
 	claims := &Claims{}
 
-	tkn, err := jwt.ParseWithClaims(token, claims,
-		func(token *jwt.Token) (interface{}, error) {
-			// TODO pull this from enviorment file rather then hardcoded string
-			return "123ewfasdgarga", nil
-		})
+	tkn, err := parseTokenString(token, claims)
+	if err != nil {
+		return err
+	}
 
-	if err != nil && !tkn.Valid {
-		err = errors.New("Token is not valid")
+	if !tkn.Valid {
+		err = ErrInvalidToken
 	}
 	return err
+}
+
+// GetUser is
+// This function should only be called after the token is validated so their should be no
+// reason to validate the request or maybe idk
+func GetUser(token string) (string, error) {
+	claims := &Claims{}
+	_, err := parseTokenString(token, claims)
+	return claims.UserID, err
+}
+
+func parseTokenString(token string, claims *Claims) (*jwt.Token, error) {
+	return jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
+		cfg := configs.Get()
+		return cfg.Security.SecretKey, nil
+	})
 }

@@ -11,8 +11,12 @@ import (
 func Authorize(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		token := r.Header.Get("Authorization")
-		if err := security.Validate(token); err != nil {
+		err := security.Validate(token)
+		if err == security.ErrInvalidToken {
 			http.Error(w, "Bad Request", http.StatusBadRequest)
+			return
+		} else if err != nil {
+			http.Error(w, "", http.StatusInternalServerError)
 		} else {
 			next.ServeHTTP(w, r)
 		}
