@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/Wilder60/KeyRing/internal/security"
+
 	"github.com/Wilder60/KeyRing/internal/domain"
 	"github.com/Wilder60/KeyRing/internal/interfaces"
 
@@ -67,9 +69,9 @@ func (kr keyRing) addEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	r.Header.Get("Authorization")
+	userID := security.GetUserFromToken(r.Header.Get("Authorization"))
 
-	ret, err := kr.AddKeyRing(event)
+	ret, err := kr.AddKeyRing(event, userID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

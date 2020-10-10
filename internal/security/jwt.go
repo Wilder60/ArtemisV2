@@ -71,10 +71,10 @@ func Validate(token string) error {
 // GetUser is
 // This function should only be called after the token is validated so their should be no
 // reason to validate the request or maybe idk
-func GetUser(token string) (string, error) {
+func GetUserFromToken(token string) string {
 	claims := &Claims{}
-	_, err := parseTokenString(token, claims)
-	return claims.UserID, err
+	parseTokenString(token, claims)
+	return claims.UserID
 }
 
 func parseTokenString(token string, claims *Claims) (*jwt.Token, error) {
