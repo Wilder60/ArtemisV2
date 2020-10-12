@@ -10,6 +10,7 @@ import (
 )
 
 var ErrInvalidToken = errors.New("Token is not valid")
+var audience = "keyring"
 
 type Claims struct {
 	UserID string
@@ -62,7 +63,7 @@ func Validate(token string) error {
 		return err
 	}
 
-	if !tkn.Valid {
+	if !tkn.Valid || claims.Audience == audience {
 		err = ErrInvalidToken
 	}
 	return err

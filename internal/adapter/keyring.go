@@ -8,22 +8,23 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/Wilder60/KeyRing/internal/sql"
+
 	"github.com/Wilder60/KeyRing/internal/security"
 
 	"github.com/Wilder60/KeyRing/internal/domain"
-	"github.com/Wilder60/KeyRing/internal/interfaces"
 
 	"github.com/gorilla/mux"
 )
 
 type (
 	keyRing struct {
-		interfaces.Database
+		*sql.SQL
 	}
 )
 
 // InitRoutes will
-func initKeyRing(router *mux.Router, db interfaces.Database, endpoint string) {
+func initKeyRing(router *mux.Router, db *sql.SQL, endpoint string) {
 	keyRing := &keyRing{db}
 
 	router.HandleFunc("/health", healthCheck).Methods(http.MethodGet)

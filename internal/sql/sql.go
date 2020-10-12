@@ -2,49 +2,31 @@ package sql
 
 import (
 	"database/sql"
-	"fmt"
 
 	_ "github.com/GoogleCloudPlatform/cloudsql-proxy/proxy/dialers/postgres"
-	"github.com/Wilder60/KeyRing/configs"
 	"github.com/Wilder60/KeyRing/internal/domain"
+	"github.com/Wilder60/KeyRing/internal/interfaces"
 )
 
 // fmtStr is the connection string that cloudsql
-const fmtStr = "host=%s:%s:%s user=%s dbname=%s password=%s sslmode=disable"
-
-type txFn func(*sql.Tx) error
 
 // SQL stores a *sql database connection for processing requests
 //
 // It implements the interfaces.database interface so we can use it for
 // our dependency injection
 type SQL struct {
-	db *sql.DB
+	db interfaces.SQLDriver
 }
 
+// NOTE: FIX this shit... tomorrow
 // New returns a new instance of the SQL struct with a connection to the cloudsql
-func New() SQL {
-	cfg := configs.Get()
-	dsn := fmt.Sprintf(fmtStr,
-		cfg.Database.SQL.Project,
-		cfg.Database.SQL.Region,
-		cfg.Database.SQL.Instance,
-		cfg.Database.SQL.User,
-		cfg.Database.SQL.Dbname,
-		cfg.Database.SQL.Password,
-	)
-
-	db, err := sql.Open("cloudsqlpostgres", dsn)
-	if err != nil {
-		panic(err)
-	}
-
+func New(dbCtn interfaces.SQLDriver) SQL {
 	s := SQL{db}
-	s.initTable()
+	s.init()
 	return SQL{db}
 }
 
-func (s *SQL) initTable() {
+func (s *SQL) init() {
 	err := s.withTransaction(func(tx *sql.Tx) error {
 		var err error
 		_, err = tx.Exec(createExtension)
@@ -138,7 +120,7 @@ func (s *SQL) DeleteKeyRing(eventID string) (int64, error) {
 	return rowDeleted, err
 }
 
-func (s *SQL) withTransaction(fn txFn) error {
+func (s *SQL) withTransaction(fn func(*sql.Tx) error) error {
 	tx, err := s.db.Begin()
 	if err != nil {
 		return err

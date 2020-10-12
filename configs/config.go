@@ -1,15 +1,17 @@
 package configs
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 
+	"go.uber.org/fx"
 	"gopkg.in/yaml.v2"
 )
 
-type config struct {
+type Config struct {
 	Server struct {
-		Port int `yaml:"Port"`
+		Port string `yaml:"Port"`
 	} `yaml:"Server"`
 	Security struct {
 		SecretKey string `yaml:"SecretKey"`
@@ -26,26 +28,25 @@ type config struct {
 	} `yaml:"Database"`
 }
 
-var conf *config = nil
-
-// Get will initalize the conf if it is unitalized
-func Get() *config {
-	if conf == nil {
-		conf = new()
+func ProvideConfig() *Config {
+	cfg := &Config{}
+	if len(os.Args) < 2 {
+		panic(fmt.Sprintf("1 argument required but %d were found", len(os.Args)-1)) // -1 because main file
 	}
-	return conf
+	cfgPath := os.Args[1]
+	file, err := ioutil.ReadFile(cfgPath)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	err = yaml.Unmarshal(file, cfg)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	return cfg
 }
 
-func new() *config {
-	path := os.Args[1]
-	file, err := ioutil.ReadFile(path)
-	if err != nil {
-		panic(err)
-	}
-	c := config{}
-	err = yaml.Unmarshal(file, &c)
-	if err != nil {
-		panic(err)
-	}
-	return &c
-}
+var Module = fx.Options(
+	fx.Provide(ProvideConfig),
+)

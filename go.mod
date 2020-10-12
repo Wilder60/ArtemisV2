@@ -3,12 +3,16 @@ module github.com/Wilder60/KeyRing
 go 1.14
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/GoogleCloudPlatform/cloudsql-proxy v1.18.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/gin-gonic/gin v1.6.3
 	github.com/golang/protobuf v1.4.2
 	github.com/google/uuid v1.1.2
 	github.com/gorilla/mux v1.8.0
 	github.com/kr/pretty v0.1.0 // indirect
+	go.uber.org/dig v1.10.0
+	go.uber.org/fx v1.13.1
 	golang.org/x/net v0.0.0-20200930145003-4acb6c075d10 // indirect
 	golang.org/x/sys v0.0.0-20200930185726-fdedc70b468f // indirect
 	golang.org/x/text v0.3.3 // indirect
