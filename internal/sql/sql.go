@@ -3,7 +3,6 @@ package sql
 import (
 	"database/sql"
 
-	_ "github.com/GoogleCloudPlatform/cloudsql-proxy/proxy/dialers/postgres"
 	"github.com/Wilder60/KeyRing/internal/domain"
 	"github.com/Wilder60/KeyRing/internal/interfaces"
 )
@@ -21,9 +20,7 @@ type SQL struct {
 // NOTE: FIX this shit... tomorrow
 // New returns a new instance of the SQL struct with a connection to the cloudsql
 func New(dbCtn interfaces.SQLDriver) SQL {
-	s := SQL{db}
-	s.init()
-	return SQL{db}
+	return SQL{}
 }
 
 func (s *SQL) init() {

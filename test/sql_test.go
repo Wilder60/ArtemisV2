@@ -14,6 +14,5 @@ func TestGetKeyRing(t *testing.T) {
 	defer db.Close()
 
 	mock.ExpectBegin()
-	mock.ExpectExec()
 
 }

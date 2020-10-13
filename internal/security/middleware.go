@@ -16,12 +16,12 @@ func Authorize() gin.HandlerFunc {
 		tokenHeader := ctx.GetHeader("Authorization")
 		splitHeader := strings.Split(tokenHeader, " ")
 		if len(splitHeader) != 2 {
-			ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid authorization header format"))
+			ctx.AbortWithStatus(http.StatusBadRequest)
 		}
 
 		err := Validate(splitHeader[1])
 		if err == ErrInvalidToken {
-			ctx.AbortWithError(http.StatusBadRequest, ErrInvalidToken)
+			ctx.AbortWithStatus(http.StatusBadRequest)
 			return
 		} else if err != nil {
 			ctx.AbortWithStatus(http.StatusInternalServerError)
@@ -30,6 +30,18 @@ func Authorize() gin.HandlerFunc {
 	}
 }
 
-func Admin(ctx *gin.Context) {
+func Admin() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		tokenHeader := ctx.GetHeader("Authorization")
+		splitHeader := strings.Split(tokenHeader, " ")
+		if len(splitHeader) != 2 {
+			ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid authorization header format"))
+		}
+
+	}
+
+}
+
+func getTokenString() {
 
 }

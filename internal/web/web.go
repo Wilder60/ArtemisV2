@@ -3,7 +3,6 @@ package adapter
 import (
 	"net/http"
 
-	"github.com/Wilder60/KeyRing/internal/sql"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/fx"
 )
@@ -15,8 +14,8 @@ func ProvideGinServer() *gin.Engine {
 	gin.DisableConsoleColor()
 	router := gin.New()
 	router.Use(gin.Recovery())
-	router.Use(middle)
 	router.GET("health", healthCheck)
+	return router
 }
 
 func healthCheck(c *gin.Context) {
@@ -24,5 +23,5 @@ func healthCheck(c *gin.Context) {
 }
 
 var Module = fx.Options(
-	fx.Provide(ProvideGinServer)
+	fx.Provide(ProvideGinServer),
 )

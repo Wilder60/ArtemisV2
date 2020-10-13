@@ -5,12 +5,16 @@ import (
 	"time"
 
 	"github.com/Wilder60/KeyRing/configs"
-
 	"github.com/dgrijalva/jwt-go"
+	"go.uber.org/fx"
 )
 
+// This can be changed to package private now that the middleware has been
+// moved into the security module
 var ErrInvalidToken = errors.New("Token is not valid")
 var audience = "keyring"
+
+var config *configs.Config
 
 type Claims struct {
 	UserID string
@@ -31,6 +35,10 @@ type StandardClaims struct {
 
 */
 
+func Provide(cfg *configs.Config) {
+	config = cfg
+}
+
 // CreateToken will create the jwt for the given username that is passed into the function
 // NOTE: This is just for debugging purpose and should be removed shortly
 // But most likely this will not be removed becasue... reasons
@@ -44,10 +52,8 @@ func CreateToken(username string) (string, error) {
 			Issuer:    "Artemis",
 		},
 	}
-
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	cfg := configs.Get()
-	signedToken, err := token.SignedString(cfg.Security.SecretKey)
+	signedToken, err := token.SignedString(config.Security.SecretKey)
 	if err != nil {
 		return "", err
 	}
@@ -63,7 +69,7 @@ func Validate(token string) error {
 		return err
 	}
 
-	if !tkn.Valid || claims.Audience == audience {
+	if !tkn.Valid || claims.Audience != audience {
 		err = ErrInvalidToken
 	}
 	return err
@@ -80,7 +86,10 @@ func GetUserFromToken(token string) string {
 
 func parseTokenString(token string, claims *Claims) (*jwt.Token, error) {
 	return jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
-		cfg := configs.Get()
-		return cfg.Security.SecretKey, nil
+		return config.Security.SecretKey, nil
 	})
 }
+
+var Module = fx.Option(
+	fx.Provide(),
+)

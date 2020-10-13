@@ -2,19 +2,15 @@ package adapter
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"strconv"
 
-	"github.com/Wilder60/KeyRing/internal/sql"
-
-	"github.com/Wilder60/KeyRing/internal/security"
-
 	"github.com/Wilder60/KeyRing/internal/domain"
-
-	"github.com/gorilla/mux"
+	"github.com/Wilder60/KeyRing/internal/security"
+	"github.com/Wilder60/KeyRing/internal/sql"
+	"github.com/gin-gonic/gin"
 )
 
 type (
@@ -24,42 +20,35 @@ type (
 )
 
 // InitRoutes will
-func initKeyRing(router *mux.Router, db *sql.SQL, endpoint string) {
+func initKeyRing(r *gin.Engine, db *sql.SQL, endpoint string) {
 	keyRing := &keyRing{db}
 
-	router.HandleFunc("/health", healthCheck).Methods(http.MethodGet)
-	// router.HandleFunc("/KeyRing", getEvents).Methods(http.MethodGet)
-	router.HandleFunc("/KeyRing", keyRing.addEvent).Methods(http.MethodPost)
-	// router.HandleFunc("/KeyRing", updateEvent).Methods(http.MethodPatch)
-	// router.HandleFunc("/KeyRing", deleteEvents).Methods(http.MethodDelete)
+	r.GET("/KeyRing", keyRing.getEvents)
 }
 
-func (kr keyRing) getEvents(w http.ResponseWriter, r *http.Request) {
-	limitStr, ok := r.URL.Query()["limit"]
-	offsetStr, offsetExist := r.URL.Query()["offset"]
-	if !ok {
-		http.Error(w, "", http.StatusBadRequest)
-	}
-	limit, err := parseQuery(limitStr)
+func (kr keyRing) getEvents(ctx *gin.Context) {
+	queryValues := ctx.Request.URL.Query()
+	limitStr := queryValues.Get("limit")
+	offsetStr := queryValues.Get("offset")
+
+	limit, err := strconv.ParseInt(limitStr, 10, 64)
 	if err != nil {
-		http.Error(w, "", http.StatusBadRequest)
+		ctx.AbortWithStatus(http.StatusBadRequest)
 	}
 
 	var offset int64
-	if offsetExist {
-		if offset, err = parseQuery(offsetStr); err != nil {
-			http.Error(w, "", http.StatusBadRequest)
+	if offsetStr != "" {
+		offset, err = strconv.ParseInt(offsetStr, 10, 64)
+		if err != nil {
+			ctx.AbortWithStatus(http.StatusUnauthorized)
 		}
 	}
-	kr.GetKeyRing("", limit, offset)
-}
 
-func parseQuery(param []string) (int64, error) {
-	if len(param) < 1 {
-		return 0, errors.New("Query Parameter found with missing value")
+	entries, err := kr.GetKeyRing("", limit, offset)
+	if err != nil {
+		ctx.AbortWithStatus(http.StatusInternalServerError)
 	}
-	val, err := strconv.Atoi(param[0])
-	return int64(val), err
+	ctx.JSON(http.StatusOK, entries)
 }
 
 func (kr keyRing) addEvent(w http.ResponseWriter, r *http.Request) {
@@ -97,9 +86,4 @@ func decodeRequest(body io.ReadCloser, out interface{}) error {
 	decoder := json.NewDecoder(body)
 	decoder.DisallowUnknownFields()
 	return decoder.Decode(&out)
-}
-
-func healthCheck(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Okay!"))
 }
