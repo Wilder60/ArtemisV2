@@ -17,14 +17,15 @@ type Config struct {
 		SecretKey string `yaml:"SecretKey"`
 	} `yaml:"Security"`
 	Database struct {
-		SQL struct {
+		Postgres struct {
+			Type     string `yaml:"Type"`
 			Project  string `yaml:"Project"`
 			Region   string `yaml:"Region"`
 			Instance string `yaml:"Instance"`
 			Dbname   string `yaml:"Dbname"`
 			User     string `yaml:"User"`
 			Password string `yaml:"Password"`
-		} `yaml:"SQL"`
+		} `yaml:"Postgres"`
 	} `yaml:"Database"`
 }
 

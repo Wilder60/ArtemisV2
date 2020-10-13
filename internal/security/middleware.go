@@ -1,7 +1,6 @@
 package security
 
 import (
-	"errors"
 	"net/http"
 	"strings"
 
@@ -21,7 +20,7 @@ func Authorize() gin.HandlerFunc {
 
 		err := Validate(splitHeader[1])
 		if err == ErrInvalidToken {
-			ctx.AbortWithStatus(http.StatusBadRequest)
+			ctx.AbortWithError(http.StatusBadRequest, ErrInvalidToken)
 			return
 		} else if err != nil {
 			ctx.AbortWithStatus(http.StatusInternalServerError)
@@ -30,18 +29,15 @@ func Authorize() gin.HandlerFunc {
 	}
 }
 
+//Admin will be used to check if a given token is a valid admin token
 func Admin() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		tokenHeader := ctx.GetHeader("Authorization")
 		splitHeader := strings.Split(tokenHeader, " ")
 		if len(splitHeader) != 2 {
-			ctx.AbortWithError(http.StatusBadRequest, errors.New("Invalid authorization header format"))
+			ctx.AbortWithStatus(http.StatusUnauthorized)
 		}
 
+		ctx.Next()
 	}
-
-}
-
-func getTokenString() {
-
 }

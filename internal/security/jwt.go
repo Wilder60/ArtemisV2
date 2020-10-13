@@ -35,7 +35,7 @@ type StandardClaims struct {
 
 */
 
-func Provide(cfg *configs.Config) {
+func SetConfig(cfg *configs.Config) {
 	config = cfg
 }
 

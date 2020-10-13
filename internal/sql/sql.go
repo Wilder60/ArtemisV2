@@ -3,8 +3,9 @@ package sql
 import (
 	"database/sql"
 
+	"go.uber.org/fx"
+
 	"github.com/Wilder60/KeyRing/internal/domain"
-	"github.com/Wilder60/KeyRing/internal/interfaces"
 )
 
 // fmtStr is the connection string that cloudsql
@@ -14,13 +15,14 @@ import (
 // It implements the interfaces.database interface so we can use it for
 // our dependency injection
 type SQL struct {
-	db interfaces.SQLDriver
+	db *sql.DB
 }
 
-// NOTE: FIX this shit... tomorrow
-// New returns a new instance of the SQL struct with a connection to the cloudsql
-func New(dbCtn interfaces.SQLDriver) SQL {
-	return SQL{}
+// CreateSQL will
+func CreateSQL(dbCtn *sql.DB) *SQL {
+	s := &SQL{db: dbCtn}
+	s.init()
+	return s
 }
 
 func (s *SQL) init() {
@@ -135,3 +137,7 @@ func (s *SQL) withTransaction(fn func(*sql.Tx) error) error {
 	err = fn(tx)
 	return err
 }
+
+var KeyRingSQLModule = fx.Option(
+	fx.Provide(CreateSQL),
+)

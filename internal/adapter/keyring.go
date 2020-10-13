@@ -24,6 +24,7 @@ func initKeyRing(r *gin.Engine, db *sql.SQL, endpoint string) {
 	keyRing := &keyRing{db}
 
 	r.GET("/KeyRing", keyRing.getEvents)
+	r.POST("/KeyRing", keyRing.AddKeyRing)
 }
 
 func (kr keyRing) getEvents(ctx *gin.Context) {
@@ -51,7 +52,7 @@ func (kr keyRing) getEvents(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, entries)
 }
 
-func (kr keyRing) addEvent(w http.ResponseWriter, r *http.Request) {
+func (kr keyRing) addEvent(ctx *gin.Context) {
 	var event domain.KeyEntry
 	if err := decodeRequest(r.Body, &event); err != nil {
 		fmt.Println(err.Error())

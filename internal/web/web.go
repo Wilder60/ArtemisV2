@@ -1,4 +1,4 @@
-package adapter
+package web
 
 import (
 	"net/http"
@@ -10,18 +10,16 @@ import (
 //Note more functions can be added here if metadata
 //will be added
 
-func ProvideGinServer() *gin.Engine {
-	gin.DisableConsoleColor()
-	router := gin.New()
-	router.Use(gin.Recovery())
-	router.GET("health", healthCheck)
+func ProvideBase() *gin.Engine {
+	router := gin.Default()
+
+	router.GET("/health", func(c *gin.Context) {
+		c.Status(http.StatusOK)
+	})
+
 	return router
 }
 
-func healthCheck(c *gin.Context) {
-	c.Status(http.StatusOK)
-}
-
-var Module = fx.Options(
-	fx.Provide(ProvideGinServer),
+var ModuleBase = fx.Options(
+	fx.Provide(ProvideBase),
 )

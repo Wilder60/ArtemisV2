@@ -6,28 +6,23 @@ import (
 
 	_ "github.com/GoogleCloudPlatform/cloudsql-proxy/proxy/dialers/postgres"
 	"github.com/Wilder60/KeyRing/configs"
-	"github.com/Wilder60/KeyRing/internal/interfaces"
 	"go.uber.org/fx"
 )
-
-type SQLProvider interface {
-	CreateDriver() (interfaces.SQLDriver, error)
-}
 
 const fmtStr = "host=%s:%s:%s user=%s dbname=%s password=%s sslmode=disable"
 
 func CreateCloudSQLDriver(config *configs.Config) (*sql.DB, error) {
 	dsn := fmt.Sprintf(fmtStr,
-		config.Database.SQL.Project,
-		config.Database.SQL.Region,
-		config.Database.SQL.Instance,
-		config.Database.SQL.User,
-		config.Database.SQL.Dbname,
-		config.Database.SQL.Password,
+		config.Database.Postgres.Project,
+		config.Database.Postgres.Region,
+		config.Database.Postgres.Instance,
+		config.Database.Postgres.User,
+		config.Database.Postgres.Dbname,
+		config.Database.Postgres.Password,
 	)
-	return sql.Open("cloudsqlpostgres", dsn)
+	return sql.Open(config.Database.Postgres.Type, dsn)
 }
 
-var Module = fx.Option(
+var ModuleCloudSql = fx.Option(
 	fx.Provide(CreateCloudSQLDriver),
 )
