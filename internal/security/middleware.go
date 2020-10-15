@@ -15,15 +15,17 @@ func Authorize() gin.HandlerFunc {
 		tokenHeader := ctx.GetHeader("Authorization")
 		splitHeader := strings.Split(tokenHeader, " ")
 		if len(splitHeader) != 2 {
-			ctx.AbortWithStatus(http.StatusBadRequest)
+			ctx.AbortWithStatus(http.StatusUnauthorized)
+			return
 		}
 
 		err := Validate(splitHeader[1])
 		if err == ErrInvalidToken {
-			ctx.AbortWithError(http.StatusBadRequest, ErrInvalidToken)
+			ctx.AbortWithStatus(http.StatusUnauthorized)
 			return
 		} else if err != nil {
 			ctx.AbortWithStatus(http.StatusInternalServerError)
+			return
 		}
 		ctx.Next()
 	}

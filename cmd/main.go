@@ -8,13 +8,16 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/Wilder60/KeyRing/internal/web"
+
+	"github.com/Wilder60/KeyRing/internal/security"
+
 	"github.com/Wilder60/KeyRing/internal/sql"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/fx"
 
 	"github.com/Wilder60/KeyRing/configs"
-	"github.com/Wilder60/KeyRing/internal/web"
 )
 
 func start(lifecycle fx.Lifecycle, shutdowner fx.Shutdowner, router *gin.Engine, config *configs.Config) {
@@ -55,20 +58,13 @@ func main() {
 
 	fx.New(
 		configs.Module,
-		web.ModuleBase,
 		sql.ModuleCloudSql,
+		sql.KeyRingSQLModule,
+		web.KeyRingModule,
+		web.RouterModule,
+		fx.Invoke(security.SetConfig),
 		fx.Invoke(start),
 	).Run()
 
-	// srv := &http.Server{
-	// 	Handler:      adapter.NewWebAdapter(),
-	// 	Addr:         "127.0.0.1:8001",
-	// 	WriteTimeout: 15 * time.Second,
-	// 	ReadTimeout:  15 * time.Second,
-	// }
-
 	fmt.Println("Starting server")
-
-	// log.Fatal(srv.ListenAndServe())
-
 }

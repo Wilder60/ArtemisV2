@@ -16,14 +16,14 @@ const (
 		PRIMARY KEY(ID)
 	)`
 
-	selectKeyEntry = `SELECT * FROM keyring WHERE Userid == $1 ORDER BY Id LIMIT $2 OFFSET $3`
+	selectKeyEntry = `SELECT * FROM keyring WHERE Userid = $1::uuid ORDER BY Id LIMIT $2 OFFSET $3;`
 	insertKeyEntry = `INSERT INTO keyring(
 		Id, Userid, Url, Username, Sitename, Sitepassword, Folder, Notes, Favorite) 
-		VALUES(uuid_generate_v4(), $1, $2, $3, $4, $5, $6, $7, $8)`
+		VALUES(uuid_generate_v4(), $1::uuid, $2, $3, $4, $5, $6, $7, $8);`
 
 	updateKeyEntry = `UPDATE keyring
 	SET Url = $1, Username = $2, Sitename = $3, Sitepassword = $4, Folder = $5, Notes = $6, Favorite = $7
-	WHERE Id == $8 AND Userid == $9`
+	WHERE Id = $8::uuid AND Userid = $9::uuid;`
 
-	deleteKeyEntry = `DELETE FROM keyring WHERE Id == $1`
+	deleteKeyEntry = `DELETE FROM keyring WHERE Id = $1::uuid;`
 )

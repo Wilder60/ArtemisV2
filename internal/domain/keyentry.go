@@ -4,12 +4,11 @@ package domain
 // to be passed to the business logic of the code
 type KeyEntry struct {
 	ID           string `json:"id,omitempty"`
-	UserID       string `json:"userid,omitempty"`
-	URL          string `json:"url"`
-	SiteName     string `json:"sitename"`
-	Folder       string `json:"folder"`
-	Username     string `json:"username"`
-	SitePassword string `json:"sitepassword"`
-	Notes        string `json:"notes"`
-	Favorite     bool   `json:"favorite"`
+	URL          string `json:"url,omitempty"`
+	SiteName     string `json:"sitename,omitempty"`
+	Folder       string `json:"folder,omitempty"`
+	Username     string `json:"username,omitempty"`
+	SitePassword string `json:"sitepassword,omitempty"`
+	Notes        string `json:"notes,omitempty"`
+	Favorite     bool   `json:"favorite,omitempty"`
 }

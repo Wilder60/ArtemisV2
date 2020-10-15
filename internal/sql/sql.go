@@ -57,10 +57,12 @@ func (s *SQL) GetKeyRing(id string, limit int64, offest int64) ([]domain.KeyEntr
 		defer rows.Close()
 
 		for rows.Next() {
-			entity := domain.KeyEntry{}
-			err := rows.Scan(&entity)
+			e := domain.KeyEntry{}
+			var userid string //we don't need to return this to the user
+			err := rows.Scan(&e.ID, &userid, &e.URL, &e.SiteName, &e.Folder,
+				&e.Username, &e.SitePassword, &e.Notes, &e.Favorite)
 			if err == nil {
-				pagedData = append(pagedData, entity)
+				pagedData = append(pagedData, e)
 			}
 		}
 		return rows.Err()

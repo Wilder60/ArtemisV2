@@ -6,7 +6,6 @@ import (
 
 	"github.com/Wilder60/KeyRing/configs"
 	"github.com/dgrijalva/jwt-go"
-	"go.uber.org/fx"
 )
 
 // This can be changed to package private now that the middleware has been
@@ -47,13 +46,13 @@ func CreateToken(username string) (string, error) {
 	claims := Claims{
 		UserID: username,
 		StandardClaims: jwt.StandardClaims{
-			IssuedAt:  now.Add(5 * time.Minute).Unix(),
-			ExpiresAt: now.Unix(),
+			IssuedAt:  now.Unix(),
+			ExpiresAt: now.Add(5 * time.Minute).Unix(),
 			Issuer:    "Artemis",
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	signedToken, err := token.SignedString(config.Security.SecretKey)
+	signedToken, err := token.SignedString([]byte(config.Security.SecretKey))
 	if err != nil {
 		return "", err
 	}
@@ -69,7 +68,7 @@ func Validate(token string) error {
 		return err
 	}
 
-	if !tkn.Valid || claims.Audience != audience {
+	if !tkn.Valid {
 		err = ErrInvalidToken
 	}
 	return err
@@ -86,10 +85,6 @@ func GetUserFromToken(token string) string {
 
 func parseTokenString(token string, claims *Claims) (*jwt.Token, error) {
 	return jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
-		return config.Security.SecretKey, nil
+		return []byte(config.Security.SecretKey), nil
 	})
 }
-
-var Module = fx.Option(
-	fx.Provide(),
-)
