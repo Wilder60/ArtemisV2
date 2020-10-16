@@ -9,7 +9,7 @@ import (
 
 // Authorize will check the authorization for a given request, this will check if they just have a valid token
 // not if they are an adminstrator, that will be handed by the AuthorizeAdmin function
-func Authorize() gin.HandlerFunc {
+func (sec *Security) Authorize() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// Authorization Header should be Bearer: Token as is standard
 		tokenHeader := ctx.GetHeader("Authorization")
@@ -19,7 +19,7 @@ func Authorize() gin.HandlerFunc {
 			return
 		}
 
-		err := Validate(splitHeader[1])
+		err := sec.Validate(splitHeader[1])
 		if err == ErrInvalidToken {
 			ctx.AbortWithStatus(http.StatusUnauthorized)
 			return
@@ -32,7 +32,7 @@ func Authorize() gin.HandlerFunc {
 }
 
 //Admin will be used to check if a given token is a valid admin token
-func Admin() gin.HandlerFunc {
+func (sec *Security) Admin() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		tokenHeader := ctx.GetHeader("Authorization")
 		splitHeader := strings.Split(tokenHeader, " ")

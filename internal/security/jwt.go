@@ -4,6 +4,8 @@ import (
 	"errors"
 	"time"
 
+	"go.uber.org/fx"
+
 	"github.com/Wilder60/KeyRing/configs"
 	"github.com/dgrijalva/jwt-go"
 )
@@ -15,13 +17,7 @@ var audience = "keyring"
 
 var config *configs.Config
 
-type Claims struct {
-	UserID string
-	jwt.StandardClaims
-}
-
 /*
-
 type StandardClaims struct {
 	Audience  string `json:"aud,omitempty"`
 	ExpiresAt int64  `json:"exp,omitempty"`
@@ -31,17 +27,29 @@ type StandardClaims struct {
 	NotBefore int64  `json:"nbf,omitempty"`
 	Subject   string `json:"sub,omitempty"`
 }
-
 */
+// Claims is an extended version of the struct to be added to the Standarded
+// Claims added above
+type Claims struct {
+	UserID string
+	jwt.StandardClaims
+}
 
-func SetConfig(cfg *configs.Config) {
-	config = cfg
+// Security is the struct
+type Security struct {
+	config *configs.Config
+}
+
+func CreateDefaultSecurity(cfg *configs.Config) *Security {
+	return &Security{
+		config: cfg,
+	}
 }
 
 // CreateToken will create the jwt for the given username that is passed into the function
 // NOTE: This is just for debugging purpose and should be removed shortly
 // But most likely this will not be removed becasue... reasons
-func CreateToken(username string) (string, error) {
+func (sec *Security) CreateToken(username string) (string, error) {
 	now := time.Now()
 	claims := Claims{
 		UserID: username,
@@ -60,10 +68,10 @@ func CreateToken(username string) (string, error) {
 }
 
 // Validate will take a string version of a token and construct the claims for the
-func Validate(token string) error {
+func (sec *Security) Validate(token string) error {
 	claims := &Claims{}
 
-	tkn, err := parseTokenString(token, claims)
+	tkn, err := sec.parseTokenString(token, claims)
 	if err != nil {
 		return err
 	}
@@ -77,14 +85,18 @@ func Validate(token string) error {
 // GetUser is
 // This function should only be called after the token is validated so their should be no
 // reason to validate the request or maybe idk
-func GetUserFromToken(token string) string {
+func (sec *Security) GetUserFromToken(token string) string {
 	claims := &Claims{}
-	parseTokenString(token, claims)
+	sec.parseTokenString(token, claims)
 	return claims.UserID
 }
 
-func parseTokenString(token string, claims *Claims) (*jwt.Token, error) {
+func (sec *Security) parseTokenString(token string, claims *Claims) (*jwt.Token, error) {
 	return jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
 		return []byte(config.Security.SecretKey), nil
 	})
 }
+
+var SecurityModule = fx.Option(
+	fx.Provide(CreateDefaultSecurity),
+)

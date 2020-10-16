@@ -8,19 +8,18 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/Wilder60/KeyRing/internal/web"
-
+	"cloud.google.com/go/logging"
+	"github.com/Wilder60/KeyRing/configs"
+	"github.com/Wilder60/KeyRing/internal/logger"
 	"github.com/Wilder60/KeyRing/internal/security"
-
 	"github.com/Wilder60/KeyRing/internal/sql"
+	"github.com/Wilder60/KeyRing/internal/web"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/fx"
-
-	"github.com/Wilder60/KeyRing/configs"
 )
 
-func start(lifecycle fx.Lifecycle, shutdowner fx.Shutdowner, router *gin.Engine, config *configs.Config) {
+func start(lifecycle fx.Lifecycle, shutdowner fx.Shutdowner, router *gin.Engine, config *configs.Config, logger *logging.Logger) {
 	srv := &http.Server{
 		Handler:      router,
 		Addr:         config.Server.Port,
@@ -31,7 +30,15 @@ func start(lifecycle fx.Lifecycle, shutdowner fx.Shutdowner, router *gin.Engine,
 	lifecycle.Append(
 		fx.Hook{
 			OnStart: func(context.Context) error {
-				fmt.Println("Starting server")
+				logger.Log(
+					logging.Entry{
+						Payload: "Starting Server on port " + config.Server.Port,
+					},
+				)
+				err := logger.Flush()
+				if err != nil {
+					panic(err)
+				}
 				go srv.ListenAndServe()
 
 				c := make(chan os.Signal, 1)
@@ -62,7 +69,8 @@ func main() {
 		sql.KeyRingSQLModule,
 		web.KeyRingModule,
 		web.RouterModule,
-		fx.Invoke(security.SetConfig),
+		logger.CloudLoggerModule,
+		security.SecurityModule,
 		fx.Invoke(start),
 	).Run()
 

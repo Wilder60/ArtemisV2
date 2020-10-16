@@ -13,6 +13,10 @@ type Config struct {
 	Server struct {
 		Port string `yaml:"Port"`
 	} `yaml:"Server"`
+	Logger struct {
+		Project string `yaml:"Project"`
+		Name    string `yaml:"Name"`
+	} `yaml:"Logger"`
 	Security struct {
 		SecretKey string `yaml:"SecretKey"`
 	} `yaml:"Security"`
