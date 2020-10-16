@@ -4,6 +4,8 @@ import (
 	"errors"
 	"time"
 
+	"github.com/Wilder60/KeyRing/internal/logger"
+
 	"go.uber.org/fx"
 
 	"github.com/Wilder60/KeyRing/configs"
@@ -37,11 +39,13 @@ type Claims struct {
 
 // Security is the struct
 type Security struct {
+	log    *logger.Logger
 	config *configs.Config
 }
 
-func CreateDefaultSecurity(cfg *configs.Config) *Security {
+func CreateDefaultSecurity(cfg *configs.Config, log *logger.Logger) *Security {
 	return &Security{
+		log:    log,
 		config: cfg,
 	}
 }
