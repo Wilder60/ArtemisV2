@@ -4,23 +4,37 @@ import (
 	"database/sql"
 	"fmt"
 
-	_ "github.com/GoogleCloudPlatform/cloudsql-proxy/proxy/dialers/postgres"
 	"github.com/Wilder60/KeyRing/configs"
+	_ "github.com/lib/pq"
 	"go.uber.org/fx"
+	"go.uber.org/zap"
 )
 
-const fmtStr = "host=%s:%s:%s user=%s dbname=%s password=%s sslmode=disable"
+// const fmtStr = "postgres://%v:%v@%v:%v/%v?sslmode=disable"
+const fmtStr = "host=%s port=%s user=%s password=%s dbname=%s sslmode=disable"
 
-func CreateCloudSQLDriver(config *configs.Config) (*sql.DB, error) {
-	dsn := fmt.Sprintf(fmtStr,
-		config.Database.Postgres.Project,
-		config.Database.Postgres.Region,
-		config.Database.Postgres.Instance,
+func CreateCloudSQLDriver(config *configs.Config, logger *zap.Logger) (*sql.DB, error) {
+
+	logger.Info(fmt.Sprintf(fmtStr,
+		config.Database.Postgres.Port,
 		config.Database.Postgres.User,
-		config.Database.Postgres.Dbname,
 		config.Database.Postgres.Password,
+		config.Database.Postgres.Dbname),
 	)
-	return sql.Open(config.Database.Postgres.Type, dsn)
+	// config.Database.Postgres.Hostname,
+	dsn := fmt.Sprintf(fmtStr,
+		config.Database.Postgres.Hostname,
+		config.Database.Postgres.Port,
+		config.Database.Postgres.User,
+		config.Database.Postgres.Password,
+		config.Database.Postgres.Dbname)
+
+	client, err := sql.Open("postgres", dsn)
+	pingErr := client.Ping()
+	if pingErr != nil {
+		print(err.Error())
+	}
+	return client, pingErr
 }
 
 var ModuleCloudSql = fx.Option(

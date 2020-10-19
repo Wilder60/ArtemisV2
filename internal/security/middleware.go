@@ -24,6 +24,7 @@ func (sec *Security) Authorize() gin.HandlerFunc {
 			ctx.AbortWithStatus(http.StatusUnauthorized)
 			return
 		} else if err != nil {
+			sec.logger.Error("Failed to parse")
 			ctx.AbortWithStatus(http.StatusInternalServerError)
 			return
 		}

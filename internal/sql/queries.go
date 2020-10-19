@@ -25,5 +25,5 @@ const (
 	SET Url = $1, Username = $2, Sitename = $3, Sitepassword = $4, Folder = $5, Notes = $6, Favorite = $7
 	WHERE Id = $8::uuid AND Userid = $9::uuid;`
 
-	deleteKeyEntry = `DELETE FROM keyring WHERE Id = $1::uuid;`
+	deleteKeyEntry = `DELETE FROM keyring WHERE Userid = $1::uuid AND Id in (:$2);`
 )

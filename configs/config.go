@@ -22,13 +22,11 @@ type Config struct {
 	} `yaml:"Security"`
 	Database struct {
 		Postgres struct {
-			Type     string `yaml:"Type"`
-			Project  string `yaml:"Project"`
-			Region   string `yaml:"Region"`
-			Instance string `yaml:"Instance"`
+			Hostname string `yaml:"Hostname"`
 			Dbname   string `yaml:"Dbname"`
 			User     string `yaml:"User"`
 			Password string `yaml:"Password"`
+			Port     string `yaml:"Port"`
 		} `yaml:"Postgres"`
 	} `yaml:"Database"`
 }

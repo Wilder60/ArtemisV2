@@ -1,2 +1,9 @@
-*.yaml
+*.exe~
 *.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+*.yaml
+dockerfile

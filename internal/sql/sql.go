@@ -2,6 +2,9 @@ package sql
 
 import (
 	"database/sql"
+	"fmt"
+
+	"go.uber.org/zap"
 
 	"go.uber.org/fx"
 
@@ -15,17 +18,22 @@ import (
 // It implements the interfaces.database interface so we can use it for
 // our dependency injection
 type SQL struct {
-	db *sql.DB
+	logger *zap.Logger
+	db     *sql.DB
 }
 
 // CreateSQL will
-func CreateSQL(dbCtn *sql.DB) *SQL {
-	s := &SQL{db: dbCtn}
+func CreateSQL(dbCtn *sql.DB, log *zap.Logger) *SQL {
+	s := &SQL{
+		logger: log,
+		db:     dbCtn,
+	}
 	s.init()
 	return s
 }
 
 func (s *SQL) init() {
+	s.logger.Info("Starting init of table")
 	err := s.withTransaction(func(tx *sql.Tx) error {
 		var err error
 		_, err = tx.Exec(createExtension)
@@ -33,7 +41,7 @@ func (s *SQL) init() {
 		return err
 	})
 	if err != nil {
-		panic(err)
+		s.logger.Panic(fmt.Sprintf("Failure encountered initalizing tables. err: %v", err))
 	}
 	return
 }
@@ -63,6 +71,8 @@ func (s *SQL) GetKeyRing(id string, limit int64, offest int64) ([]domain.KeyEntr
 				&e.Username, &e.SitePassword, &e.Notes, &e.Favorite)
 			if err == nil {
 				pagedData = append(pagedData, e)
+			} else {
+				s.logger.Warn(fmt.Sprintf("Failure to serialize table row data - %v", err))
 			}
 		}
 		return rows.Err()
@@ -108,10 +118,10 @@ func (s *SQL) UpdateKeyRing(entry domain.KeyEntry, userID string) (int64, error)
 }
 
 // DeleteKeyRing will take a string id related to a request
-func (s *SQL) DeleteKeyRing(eventID string) (int64, error) {
+func (s *SQL) DeleteKeyRing(eventID []string, userID string) (int64, error) {
 	var rowDeleted int64
 	err := s.withTransaction(func(tx *sql.Tx) (err error) {
-		deleteRequest, err := tx.Exec(deleteKeyEntry, eventID)
+		deleteRequest, err := tx.Exec(deleteKeyEntry, userID, eventID)
 		if err != nil {
 			return
 		}
@@ -130,6 +140,7 @@ func (s *SQL) withTransaction(fn func(*sql.Tx) error) error {
 	defer func() {
 		p := recover()
 		if p != nil || err != nil {
+			s.logger.Warn("Panic encountered in sql transaction rolling back...")
 			tx.Rollback()
 		} else {
 			err = tx.Commit()

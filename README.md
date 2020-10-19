@@ -33,6 +33,5 @@ Note: these endpoints are subject to change
 ## Planned ###
 
 * gRPC for interservice communication
-* Edge Security with Auth0 Validation
 * Terraform
 * Running in GCP Compute Engine

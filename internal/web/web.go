@@ -1,7 +1,6 @@
 package web
 
 import (
-	"fmt"
 	"net/http"
 
 	"go.uber.org/fx"
@@ -20,23 +19,6 @@ func RegisterRoutes(kr *KeyRing, sec *security.Security) *gin.Engine {
 
 	base.GET("/health", func(c *gin.Context) {
 		c.Status(http.StatusOK)
-	})
-
-	base.GET("/key", func(c *gin.Context) {
-		str, ok := c.GetQuery("user")
-		if !ok {
-			c.AbortWithStatus(http.StatusBadRequest)
-			return
-		}
-
-		token, err := sec.CreateToken(str)
-		if err != nil {
-			c.AbortWithError(http.StatusInternalServerError, err)
-			return
-		}
-		c.Header("Authorization", fmt.Sprintf("Bearer %s", token))
-		c.Status(http.StatusOK)
-		return
 	})
 
 	ring := r.Group("/api/v1")

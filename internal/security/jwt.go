@@ -2,14 +2,11 @@ package security
 
 import (
 	"errors"
-	"time"
-
-	"github.com/Wilder60/KeyRing/internal/logger"
-
-	"go.uber.org/fx"
 
 	"github.com/Wilder60/KeyRing/configs"
 	"github.com/dgrijalva/jwt-go"
+	"go.uber.org/fx"
+	"go.uber.org/zap"
 )
 
 // This can be changed to package private now that the middleware has been
@@ -39,36 +36,15 @@ type Claims struct {
 
 // Security is the struct
 type Security struct {
-	log    *logger.Logger
 	config *configs.Config
+	logger *zap.Logger
 }
 
-func CreateDefaultSecurity(cfg *configs.Config, log *logger.Logger) *Security {
+func CreateDefaultSecurity(cfg *configs.Config, log *zap.Logger) *Security {
 	return &Security{
-		log:    log,
 		config: cfg,
+		logger: log,
 	}
-}
-
-// CreateToken will create the jwt for the given username that is passed into the function
-// NOTE: This is just for debugging purpose and should be removed shortly
-// But most likely this will not be removed becasue... reasons
-func (sec *Security) CreateToken(username string) (string, error) {
-	now := time.Now()
-	claims := Claims{
-		UserID: username,
-		StandardClaims: jwt.StandardClaims{
-			IssuedAt:  now.Unix(),
-			ExpiresAt: now.Add(5 * time.Minute).Unix(),
-			Issuer:    "Artemis",
-		},
-	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	signedToken, err := token.SignedString([]byte(config.Security.SecretKey))
-	if err != nil {
-		return "", err
-	}
-	return signedToken, nil
 }
 
 // Validate will take a string version of a token and construct the claims for the
