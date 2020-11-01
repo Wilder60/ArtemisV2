@@ -10,12 +10,12 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/Wilder60/Calendar/internal/adapter"
-	"github.com/Wilder60/Calendar/internal/security"
-	"github.com/Wilder60/Calendar/internal/storage"
-	"github.com/Wilder60/Calendar/internal/web"
+	"github.com/Wilder60/ArtemisV2/Calendar/internal/adapter"
+	"github.com/Wilder60/ArtemisV2/Calendar/internal/db"
+	"github.com/Wilder60/ArtemisV2/Calendar/internal/security"
+	"github.com/Wilder60/ArtemisV2/Calendar/internal/web"
 
-	"github.com/Wilder60/Calendar/config"
+	"github.com/Wilder60/ArtemisV2/Calendar/config"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/fx"
 )
@@ -59,7 +59,7 @@ func main() {
 		fx.Provide(zap.NewProduction),
 		config.ConfigModule,
 		security.SecurityModule,
-		storage.FirebaseModule,
+		db.FirebaseModule,
 		adapter.CalendarHandlerModule,
 		web.EngineModule,
 		fx.Invoke(start),

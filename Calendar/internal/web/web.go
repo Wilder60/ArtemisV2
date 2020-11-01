@@ -1,8 +1,8 @@
 package web
 
 import (
-	"github.com/Wilder60/Calendar/internal/adapter"
-	"github.com/Wilder60/Calendar/internal/security"
+	"github.com/Wilder60/ArtemisV2/Calendar/internal/adapter"
+	"github.com/Wilder60/ArtemisV2/Calendar/internal/security"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/fx"
 	"go.uber.org/zap"

@@ -11,12 +11,12 @@ import (
 	"syscall"
 	"testing"
 
-	"github.com/Wilder60/ShadowKeep/internal/domain"
+	"github.com/Wilder60/ArtemisV2/Calendar/internal/domain"
 	"github.com/google/go-cmp/cmp"
 	"google.golang.org/api/iterator"
 
 	"cloud.google.com/go/firestore"
-	"github.com/Wilder60/ShadowKeep/internal/db"
+	"github.com/Wilder60/ArtemisV2/Calendar/internal/db"
 )
 
 const FirestoreEmulatorHost = "FIRESTORE_EMULATOR_HOST"

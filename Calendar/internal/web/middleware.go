@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/Wilder60/ShadowKeep/internal/security"
+	"github.com/Wilder60/ArtemisV2/Calendar/internal/security"
 	"github.com/gin-gonic/gin"
 )
 

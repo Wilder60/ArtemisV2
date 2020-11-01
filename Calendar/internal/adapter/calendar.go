@@ -5,11 +5,10 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/Wilder60/ShadowKeep/internal/domain/requests"
+	"github.com/Wilder60/ArtemisV2/Calendar/internal/db"
+	"github.com/Wilder60/ArtemisV2/Calendar/internal/domain"
+	"github.com/Wilder60/ArtemisV2/Calendar/internal/domain/requests"
 
-	"github.com/Wilder60/ShadowKeep/internal/domain"
-
-	"github.com/Wilder60/ShadowKeep/internal/db"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/fx"
 )

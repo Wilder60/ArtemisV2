@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/Wilder60/ShadowKeep/test/mocks"
+	"github.com/Wilder60/ArtemisV2/Calendar/internal/test/mocks"
 )
 
 func TestAdapterGetEventsInRangeSuccess(T *testing.T) {

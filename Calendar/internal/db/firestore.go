@@ -10,8 +10,8 @@ import (
 	"google.golang.org/api/option"
 
 	"cloud.google.com/go/firestore"
-	"github.com/Wilder60/Calendar/config"
-	"github.com/Wilder60/Calendar/internal/domain"
+	"github.com/Wilder60/ArtemisV2/Calendar/config"
+	"github.com/Wilder60/ArtemisV2/Calendar/internal/domain"
 	"go.uber.org/fx"
 )
 

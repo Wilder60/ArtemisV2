@@ -3,7 +3,7 @@ package adapter
 import (
 	"context"
 
-	"github.com/Wilder60/ShadowKeep/internal/domain"
+	"github.com/Wilder60/ArtemisV2/Calendar/internal/domain"
 )
 
 type Storage interface {

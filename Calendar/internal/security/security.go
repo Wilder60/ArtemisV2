@@ -6,7 +6,7 @@ import (
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 
-	"github.com/Wilder60/ShadowKeep/config"
+	"github.com/Wilder60/ArtemisV2/Calendar/config"
 	"github.com/dgrijalva/jwt-go"
 )
 
