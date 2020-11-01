@@ -7,3 +7,7 @@
 *.out
 *.yaml
 dockerfile
+*.tf
+*.json
+*.firebaserc
+.terraform
