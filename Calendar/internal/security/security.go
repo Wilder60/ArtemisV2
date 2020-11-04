@@ -21,6 +21,7 @@ type StandardClaims struct {
 	Subject   string `json:"sub,omitempty"`
 }
 */
+
 // Claims is an extended version of the struct to be added to the Standarded
 // Claims added above
 type Claims struct {
@@ -48,13 +49,17 @@ func (s *Security) Validate(tokenString string) error {
 	claims := &Claims{}
 
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(tkn *jwt.Token) (interface{}, error) {
-		if tkn.Method != jwt.SigningMethodHS512 {
+		// SigningMethodHS512
+		if tkn.Method != jwt.SigningMethodHS256 {
 			return nil, errors.New("Invalid Signing Method")
 		}
 		return []byte(s.config.Security.SecretKey), nil
 	})
+	if err != nil {
+		return err
+	}
 
-	if token.Valid {
+	if !token.Valid {
 		err = errors.New("Token is not valid")
 	}
 	return err
@@ -68,6 +73,24 @@ func (s *Security) GetClaims(token string) (*Claims, error) {
 		return []byte(s.config.Security.SecretKey), nil
 	})
 	return claims, err
+}
+
+// CreateToken will create the jwt for the given username that is passed into the function
+// NOTE: This is just for debugging purpose and should be removed shortly
+// But most likely this will not be removed becasue... reasons
+func (sec *Security) CreateToken(username string) (string, error) {
+	claims := Claims{
+		UserID: username,
+		StandardClaims: jwt.StandardClaims{
+			Issuer: "Artemis",
+		},
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	signedToken, err := token.SignedString([]byte(sec.config.Security.SecretKey))
+	if err != nil {
+		return "", err
+	}
+	return signedToken, nil
 }
 
 var SecurityModule = fx.Option(

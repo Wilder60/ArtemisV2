@@ -1,6 +1,8 @@
 package web
 
 import (
+	"net/http"
+
 	"github.com/Wilder60/ArtemisV2/Calendar/internal/adapter"
 	"github.com/Wilder60/ArtemisV2/Calendar/internal/security"
 	"github.com/gin-gonic/gin"
@@ -17,6 +19,15 @@ func New() *gin.Engine {
 // CreateEngine will take
 func CreateEngine(cal *adapter.Calendar, sec *security.Security, logger *zap.Logger) *gin.Engine {
 	engine := gin.Default()
+	engine.GET("key", func(ctx *gin.Context) {
+		token, err := sec.CreateToken("TESTUSER")
+		if err != nil {
+			ctx.Status(http.StatusInternalServerError)
+			return
+		}
+		ctx.JSON(http.StatusOK, token)
+	})
+
 	calendarGroup := engine.Group("api/v1/calendar")
 	calendarGroup.Use(Authorize(sec))
 	calendarGroup.Use(AddUser(sec))
@@ -26,7 +37,7 @@ func CreateEngine(cal *adapter.Calendar, sec *security.Security, logger *zap.Log
 
 func registerCalendarHandlers(group *gin.RouterGroup, api calendar) {
 	// GET api/v1/calendar?limit={val}&offset={val}
-	group.GET("/", api.GetEventsInRange)
+	group.GET("/", api.GetPaginatedEvents)
 	group.GET("/range", api.GetEventsInRange)
 	group.POST("/event", api.AddEvent)
 	group.PATCH("/event", api.UpdateEvent)

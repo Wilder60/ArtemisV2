@@ -12,6 +12,7 @@ import (
 	"cloud.google.com/go/firestore"
 	"github.com/Wilder60/ArtemisV2/Calendar/config"
 	"github.com/Wilder60/ArtemisV2/Calendar/internal/domain"
+	"github.com/Wilder60/ArtemisV2/Calendar/internal/domain/requests"
 	"go.uber.org/fx"
 )
 
@@ -24,8 +25,9 @@ type Firestore struct {
 // CreateFirestoreWrapper is the function that will be called to create the firestore
 // to be used for fx's dependency injection
 func CreateFirestoreWrapper(config *config.Config) *Firestore {
+
 	ctx := context.Background()
-	serviceAccount := option.WithCredentialsFile(config.Database.Postgres.User)
+	serviceAccount := option.WithCredentialsFile(config.Database.Firebase.ServiceAccount)
 	app, err := firebase.NewApp(ctx, nil, serviceAccount)
 	if err != nil {
 		panic(fmt.Sprintf("Could not create new firebase app err: %v", err.Error()))
@@ -45,11 +47,17 @@ func CreateFirestoreWrapper(config *config.Config) *Firestore {
 // GetEventsPaginated will take a starting time, and will return all the events after
 // sdate in a paginated format, using the limit and offset parameters
 // GET api/v1/calendar?time=string&limit=int&offset=int
-func (w *Firestore) GetEventsPaginated(ctx context.Context, userID, sdate string, limit, offset int) ([]domain.Event, error) {
-	iter := w.Collection.Where("UserID", "==", userID).
-		OrderBy("SDate", firestore.Asc).
-		StartAt(sdate).
-		Offset(offset).Limit(limit).Documents(ctx)
+func (w *Firestore) GetEventsPaginated(ctx context.Context, req requests.GetPagination) ([]domain.Event, error) {
+	var direction firestore.Direction
+	if req.Desc {
+		direction = firestore.Asc
+	} else {
+		direction = firestore.Desc
+	}
+
+	iter := w.Collection.Where("UserID", "==", req.UserID).
+		OrderBy("SDate", direction).StartAt(req.Sdate).
+		Offset(req.Offset).Limit(req.Limit).Documents(req.Ctx)
 
 	return w.parseIterator(iter)
 }
@@ -59,9 +67,7 @@ func (w *Firestore) GetEventsInRange(ctx context.Context, userID, sdate, edate s
 	// Give me every event for a given user ordered by sdate, starting at the sdate and ending at edate
 	iter := w.Collection.Where("UserID", "==", userID).
 		OrderBy("SDate", firestore.Asc).
-		StartAt(sdate).
-		EndAt(edate).
-		Documents(ctx)
+		StartAt(sdate).EndAt(edate).Documents(ctx)
 
 	return w.parseIterator(iter)
 }
@@ -98,8 +104,8 @@ func (w *Firestore) CreateEvents(ctx context.Context, event domain.Event) error 
 }
 
 // PATCH api/v1/calendar
-func (w *Firestore) UpdateEvent(ctx context.Context, event domain.Event) error {
-	iterator := w.Collection.Where("UserID", "==", event.UserID).Where("ID", "==", event.ID).Documents(ctx)
+func (w *Firestore) UpdateEvent(ctx context.Context, req requests.Update) error {
+	iterator := w.Collection.Where("UserID", "==", req.UserID).Where("ID", "==", req.EventID).Documents(ctx)
 	docs, err := iterator.GetAll()
 	if err != nil {
 		return err

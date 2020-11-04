@@ -4,8 +4,6 @@ package domain
 // and the Reminder types
 type Event struct {
 	ID          string `json:"ID,omitempty"`
-	UserID      string `json:"UserID,omitempty"`
-	Type        string `json:"Type"`
 	Name        string `json:"Name"`
 	Description string `json:"Description"`
 	Color       string `json:"Color"`

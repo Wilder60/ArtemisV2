@@ -2,10 +2,11 @@ package mocks
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/stretchr/testify/mock"
 
-	"github.com/Wilder60/ShadowKeep/internal/domain"
+	"github.com/Wilder60/ArtemisV2/Calendar/internal/domain"
 )
 
 type StorageMock struct {
@@ -17,6 +18,7 @@ func NewStorageMock() *StorageMock {
 }
 
 func (s *StorageMock) GetEventsPaginated(ctx context.Context, userID, sdate string, limit, offset int) ([]domain.Event, error) {
+	fmt.Printf("user: %s\n sdate: %s\n limit: %d\n offset: %d\n", userID, sdate, limit, offset)
 	return []domain.Event{}, nil
 }
 

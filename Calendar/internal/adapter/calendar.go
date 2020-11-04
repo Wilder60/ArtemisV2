@@ -2,6 +2,7 @@ package adapter
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -46,6 +47,7 @@ func (c *Calendar) GetPaginatedEvents(requestCtx *gin.Context) {
 		offset,
 	)
 	if err != nil {
+		fmt.Println(err.Error())
 		requestCtx.Status(http.StatusInternalServerError)
 		return
 	}
@@ -60,6 +62,7 @@ func (c *Calendar) GetEventsInRange(requestCtx *gin.Context) {
 	userID := requestCtx.GetString("UserID")
 	events, err := c.db.GetEventsInRange(ctx, userID, sdate, edate)
 	if err != nil {
+		fmt.Println(err.Error())
 		requestCtx.Status(http.StatusInternalServerError)
 		return
 	}
@@ -105,7 +108,7 @@ func (c *Calendar) DeleteEvent(requestCtx *gin.Context) {
 	deleteRequest := requests.Delete{}
 	requestCtx.Bind(&deleteRequest)
 	userID := requestCtx.GetString("UserID")
-	err := c.db.DeleteEvents(ctx, userID, deleteRequest.IDs[0])
+	err := c.db.DeleteEvents(ctx, userID, deleteRequest.ID)
 	if err != nil {
 		requestCtx.Status(http.StatusInternalServerError)
 		return

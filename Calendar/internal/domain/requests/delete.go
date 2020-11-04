@@ -1,5 +1,16 @@
 package requests
 
+import "context"
+
 type Delete struct {
-	IDs []string `json:"ids"`
+	Ctx    context.Context
+	UserID string
+	ID     string `json:"ids"`
+}
+
+func NewDelete(userID string) *Delete {
+	return &Delete{
+		Ctx:    context.Background(),
+		UserID: userID,
+	}
 }

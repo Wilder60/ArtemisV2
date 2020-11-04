@@ -2,6 +2,7 @@ package web
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"regexp"
 	"strings"
@@ -27,6 +28,7 @@ func Authorize(sec jwt) gin.HandlerFunc {
 		}
 		err = sec.Validate(unvalidatedToken)
 		if err != nil {
+			fmt.Println(err.Error())
 			ctx.AbortWithStatus(http.StatusUnauthorized)
 		}
 		ctx.Next()
