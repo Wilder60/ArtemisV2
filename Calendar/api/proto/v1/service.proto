@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+option go_package = "Calendar/pkg/grpc/service";
+
+service CalendarService {
+    rpc GetEventsInRange (GetEventsInRangeRequest) returns (EventResponse);
+	rpc GetPaginatedEvents (GetPaginatedEventsRequest) returns (EventResponse);
+	rpc AddEvent (AddEventRequest) returns (EmptyResponse);
+	rpc UpdateEvent (UpdateEventRequest) returns (EmptyResponse);
+	rpc DeleteEvent (DeleteRequest) returns (EmptyResponse);
+    rpc DeleteUser (DeleteRequest) returns (EmptyResponse);
+}
+
+message GetEventsInRangeRequest {
+    string sdate = 1;
+    string edate = 2;
+}
+
+message GetPaginatedEventsRequest {
+    string sdate = 1;  
+	bool desc = 2;
+	int64 limit = 3;
+	int64 offset = 4;
+}
+
+message AddEventRequest {
+    string name = 1;
+	string description = 2; 
+	string color = 3;
+    string sdate = 4; 
+    string edate = 5;
+}
+
+message UpdateEventRequest {
+    string eventid = 1;
+	string name = 2;       
+	string description = 3; 
+	string color = 4;       
+	string sdate = 5;       
+	string edate = 6;       
+}
+
+message DeleteRequest {
+    string id = 1;
+}
+
+message EmptyResponse {}
+
+message EventResponse {
+    repeated Event events = 1;
+}
+
+message Event{
+    string id = 1;          
+	string name = 2;
+	string description = 3;
+	string color = 4;
+	string sdate = 5;
+	string edate = 6;
+}
