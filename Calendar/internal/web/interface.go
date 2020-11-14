@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type calendar interface {
+type Calendar interface {
 	GetEventsInRange(*gin.Context)
 	GetPaginatedEvents(*gin.Context)
 	AddEvent(*gin.Context)

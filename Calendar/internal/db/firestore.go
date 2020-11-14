@@ -16,10 +16,11 @@ import (
 	"go.uber.org/fx"
 )
 
+const collectionPath = "calendar/%s/events"
+
 // Firestore is the sturct that contains a reference to the client and collection
 type Firestore struct {
-	Client     *firestore.Client
-	Collection *firestore.CollectionRef
+	Client *firestore.Client
 }
 
 // CreateFirestoreWrapper is the function that will be called to create the firestore
@@ -39,40 +40,36 @@ func CreateFirestoreWrapper(config *config.Config) *Firestore {
 	}
 
 	return &Firestore{
-		Client:     client,
-		Collection: client.Collection("events"),
+		Client: client,
 	}
 }
 
 // GetEventsPaginated will take a starting time, and will return all the events after
 // sdate in a paginated format, using the limit and offset parameters
 // GET api/v1/calendar?time=string&limit=int&offset=int
-func (w *Firestore) GetEventsPaginated(ctx context.Context, req requests.GetPagination) ([]domain.Event, error) {
+func (w Firestore) GetEventsPaginated(req *requests.GetPagination) ([]domain.Event, error) {
 	var direction firestore.Direction
-	if req.Desc {
+	if !req.Desc {
 		direction = firestore.Asc
 	} else {
 		direction = firestore.Desc
 	}
 
-	iter := w.Collection.Where("UserID", "==", req.UserID).
-		OrderBy("SDate", direction).StartAt(req.Sdate).
-		Offset(req.Offset).Limit(req.Limit).Documents(req.Ctx)
-
+	collection := w.Client.Collection(fmt.Sprintf(collectionPath, req.UserID))
+	iter := collection.OrderBy("SDate", direction).StartAt(req.Sdate).Offset(req.Offset).Limit(req.Limit).Documents(req.Ctx)
 	return w.parseIterator(iter)
 }
 
 // GET api/v1/calendar/range?sdate=string&edate=string
-func (w *Firestore) GetEventsInRange(ctx context.Context, userID, sdate, edate string) ([]domain.Event, error) {
-	// Give me every event for a given user ordered by sdate, starting at the sdate and ending at edate
-	iter := w.Collection.Where("UserID", "==", userID).
-		OrderBy("SDate", firestore.Asc).
-		StartAt(sdate).EndAt(edate).Documents(ctx)
+func (w Firestore) GetEventsInRange(req *requests.GetRange) ([]domain.Event, error) {
+	collection := w.Client.Collection(fmt.Sprintf(collectionPath, req.UserID))
 
+	// Give me every event for a given user ordered by sdate, starting at the sdate and ending at edate
+	iter := collection.OrderBy("SDate", firestore.Asc).StartAt(req.Sdate).EndAt(req.Edate).Documents(req.Ctx)
 	return w.parseIterator(iter)
 }
 
-func (w *Firestore) parseIterator(iter *firestore.DocumentIterator) ([]domain.Event, error) {
+func (w Firestore) parseIterator(iter *firestore.DocumentIterator) ([]domain.Event, error) {
 	serializedEvents := []domain.Event{}
 	for {
 		var event = domain.Event{}
@@ -93,33 +90,41 @@ func (w *Firestore) parseIterator(iter *firestore.DocumentIterator) ([]domain.Ev
 }
 
 // POST api/v1/calendar
-func (w *Firestore) CreateEvents(ctx context.Context, event domain.Event) error {
-	_, _, err := w.Collection.Add(ctx, &event)
+func (w Firestore) CreateEvents(req *requests.Add) error {
+	collection := w.Client.Collection(fmt.Sprintf(collectionPath, req.UserID))
+	event, err := req.ToEvent()
+	if err != nil {
+		return err
+	}
+	_, _, err = collection.Add(req.Ctx, &event)
 	// log the add time
 	if err != nil {
-		fmt.Printf("Create event failed err: %v\n", err.Error())
 		return err
 	}
 	return nil
 }
 
 // PATCH api/v1/calendar
-func (w *Firestore) UpdateEvent(ctx context.Context, req requests.Update) error {
-	iterator := w.Collection.Where("UserID", "==", req.UserID).Where("ID", "==", req.EventID).Documents(ctx)
+func (w Firestore) UpdateEvent(req *requests.Update) error {
+	collection := w.Client.Collection(fmt.Sprintf(collectionPath, req.UserID))
+	iterator := collection.Where("ID", "==", req.EventID).Documents(req.Ctx)
+	// This should only return one document, but a check should be added just incase
 	docs, err := iterator.GetAll()
 	if err != nil {
 		return err
 	}
+
 	if len(docs) == 0 {
 		return errors.New("Error, no event found with matching ID")
 	}
-	_, err = docs[0].Ref.Set(ctx, &event)
+	_, err = docs[0].Ref.Set(req.Ctx, req.ToEvent())
 	return err
 }
 
 // DELETE api/v1/calendar
-func (w *Firestore) DeleteEvents(ctx context.Context, userID, eventID string) error {
-	iter := w.Collection.Where("UserID", "==", userID).Where("ID", "==", eventID).Documents(ctx)
+func (w Firestore) DeleteEvents(req *requests.Delete) error {
+	collection := w.Client.Collection(fmt.Sprintf(collectionPath, req.UserID))
+	iter := collection.Where("ID", "==", req.ID).Documents(req.Ctx)
 	for {
 		doc, err := iter.Next()
 		if err == iterator.Done {
@@ -128,16 +133,20 @@ func (w *Firestore) DeleteEvents(ctx context.Context, userID, eventID string) er
 		if err != nil {
 			return err
 		}
-		doc.Ref.Delete(ctx)
+		doc.Ref.Delete(req.Ctx)
 	}
 	return nil
 }
 
 // DELETE api/v1/calendar
-func (w *Firestore) DeleteEventsForUser(ctx context.Context, userID string) error {
+func (w Firestore) DeleteEventsForUser(req *requests.Delete) error {
+
+	var userDocPath string = "events/%s"
+	collection := w.Client.Collection(fmt.Sprintf(collectionPath, req.UserID))
+
 	var batchSize int = 100
 	for {
-		iter := w.Collection.Where("UserID", "==", userID).Limit(batchSize).Documents(ctx)
+		iter := collection.Where("UserID", "==", req.UserID).Limit(batchSize).Documents(req.Ctx)
 		numDeleted := 0
 
 		batch := w.Client.Batch()
@@ -155,14 +164,17 @@ func (w *Firestore) DeleteEventsForUser(ctx context.Context, userID string) erro
 		}
 
 		if numDeleted == 0 {
-			return nil
+			break
 		}
 
-		_, err := batch.Commit(ctx)
+		_, err := batch.Commit(req.Ctx)
 		if err != nil {
 			return err
 		}
 	}
+
+	_, err := w.Client.Doc(fmt.Sprintf(userDocPath, req.UserID)).Delete(req.Ctx)
+	return err
 }
 
 var FirebaseModule = fx.Option(

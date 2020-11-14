@@ -3,6 +3,8 @@ package web
 import (
 	"net/http"
 
+	"github.com/Wilder60/ArtemisV2/Calendar/internal/middleware"
+
 	"github.com/Wilder60/ArtemisV2/Calendar/internal/adapter"
 	"github.com/Wilder60/ArtemisV2/Calendar/internal/security"
 	"github.com/gin-gonic/gin"
@@ -17,7 +19,7 @@ func New() *gin.Engine {
 }
 
 // CreateEngine will take
-func CreateEngine(cal *adapter.Calendar, sec *security.Security, logger *zap.Logger) *gin.Engine {
+func CreateEngine(cal *adapter.Calendar, sec *security.Security, logger *zap.Logger, mid *middleware.HTTP) *gin.Engine {
 	engine := gin.Default()
 	engine.GET("key", func(ctx *gin.Context) {
 		token, err := sec.CreateToken("TESTUSER")
@@ -29,13 +31,13 @@ func CreateEngine(cal *adapter.Calendar, sec *security.Security, logger *zap.Log
 	})
 
 	calendarGroup := engine.Group("api/v1/calendar")
-	calendarGroup.Use(Authorize(sec))
-	calendarGroup.Use(AddUser(sec))
+	calendarGroup.Use(mid.Authorize())
+	calendarGroup.Use(mid.AddUser())
 	registerCalendarHandlers(calendarGroup, cal)
 	return engine
 }
 
-func registerCalendarHandlers(group *gin.RouterGroup, api calendar) {
+func registerCalendarHandlers(group *gin.RouterGroup, api Calendar) {
 	// GET api/v1/calendar?limit={val}&offset={val}
 	group.GET("/", api.GetPaginatedEvents)
 	group.GET("/range", api.GetEventsInRange)

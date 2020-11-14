@@ -6,6 +6,5 @@ type Logger interface {
 	Info(string)
 	Warn(string)
 	Error(string)
-	Fatal(string)
 	Panic(string)
 }
