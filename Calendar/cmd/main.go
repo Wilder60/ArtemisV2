@@ -27,7 +27,7 @@ import (
 )
 
 func start(lifecycle fx.Lifecycle, shutdowner fx.Shutdowner, router *gin.Engine, server *grpc.Server,
-	config *config.Config, logger *logger.Cloud) {
+	config *config.Config, logger *logger.Zap) {
 
 	httpSrv := &http.Server{
 		Handler:      router,
@@ -69,7 +69,6 @@ func start(lifecycle fx.Lifecycle, shutdowner fx.Shutdowner, router *gin.Engine,
 
 			OnStop: func(ctx context.Context) error {
 				logger.Info("shutting down service")
-				logger.Close()
 				server.GracefulStop()
 				return httpSrv.Shutdown(ctx)
 			},
@@ -86,7 +85,7 @@ func main() {
 		middleware.GRPCMiddlewareModule,
 		middleware.HTTPMiddlewareModule,
 		adapter.CalendarHandlerModule,
-		logger.CloudLoggerModule,
+		logger.ZapLoggerModule,
 		adapter.GRPCModule,
 		web.EngineModule,
 		fx.Invoke(start),

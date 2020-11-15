@@ -14,8 +14,9 @@ type Config struct {
 		Port string `yaml:"Port"`
 	} `yaml:"Server"`
 	Logger struct {
-		Project string `yaml:"Project"`
-		Name    string `yaml:"Name"`
+		Project    string `yaml:"Project"`
+		Name       string `yaml:"Name"`
+		OutputPath string `yaml:"OutputPath"`
 	} `yaml:"Logger"`
 	Security struct {
 		SecretKey string `yaml:"SecretKey"`

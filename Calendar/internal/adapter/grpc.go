@@ -3,9 +3,13 @@ package adapter
 import (
 	"context"
 	"errors"
-	"log"
 
+	"github.com/Wilder60/ArtemisV2/Calendar/internal/logger"
+
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
+	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
+	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	"go.uber.org/fx"
 	"google.golang.org/grpc"
 
@@ -19,24 +23,30 @@ import (
 
 type calendarService struct {
 	pb.UnimplementedCalendarServiceServer
-	db Storage
+	db  Storage
+	log *logger.Zap
 }
 
-func ProvideGRPC(s *db.Firestore, mid *middleware.GRPC) *grpc.Server {
+func ProvideGRPC(s *db.Firestore, mid *middleware.GRPC, logger *logger.Zap) *grpc.Server {
+	grpc_zap.ReplaceGrpcLoggerV2(logger.Log)
+
 	server := grpc.NewServer(
-		grpc.UnaryInterceptor(grpc_auth.UnaryServerInterceptor(mid.GRPCAuthFunc)),
+		grpc_middleware.WithUnaryServerChain(
+			grpc_ctxtags.UnaryServerInterceptor(grpc_ctxtags.WithFieldExtractor(grpc_ctxtags.CodeGenRequestFieldExtractor)),
+			grpc_zap.UnaryServerInterceptor(logger.Log),
+			grpc_auth.UnaryServerInterceptor(mid.GRPCAuthFunc),
+		),
 	)
 	service.RegisterCalendarServiceServer(server, &calendarService{
-		db: s,
+		db:  s,
+		log: logger,
 	})
 	return server
 }
 
 func (s *calendarService) GetEventsInRange(ctx context.Context, req *pb.GetEventsInRangeRequest) (*pb.EventResponse, error) {
-	log.Println("In GetEventsInRange Function")
 	userID, err := getMetadataString(ctx)
 	if err != nil {
-		log.Println(err.Error())
 		return &pb.EventResponse{}, err
 	}
 

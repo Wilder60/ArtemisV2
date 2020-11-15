@@ -3,8 +3,9 @@ package security
 import (
 	"errors"
 
+	"github.com/Wilder60/ArtemisV2/Calendar/internal/logger"
+
 	"go.uber.org/fx"
-	"go.uber.org/zap"
 
 	"github.com/Wilder60/ArtemisV2/Calendar/config"
 	"github.com/dgrijalva/jwt-go"
@@ -31,12 +32,12 @@ type Claims struct {
 
 // The Security struct is the module that will contain
 type Security struct {
-	logger *zap.Logger
+	logger *logger.Zap
 	config *config.Config
 }
 
 // CreateSecurity is the Provder function for fx
-func CreateSecurity(cfg *config.Config, log *zap.Logger) *Security {
+func CreateSecurity(cfg *config.Config, log *logger.Zap) *Security {
 	return &Security{
 		logger: log,
 		config: cfg,

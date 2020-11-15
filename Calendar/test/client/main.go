@@ -13,9 +13,7 @@ import (
 )
 
 func main() {
-	//, grpc.WithBlock()
-
-	conn, err := grpc.Dial("localhost:8000", grpc.WithInsecure())
+	conn, err := grpc.Dial("localhost:8000", grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -23,7 +21,7 @@ func main() {
 	c := pb.NewCalendarServiceClient(conn)
 
 	ctx, _ := context.WithTimeout(context.TODO(), 10*time.Second)
-	md := metadata.Pairs("authorization", "")
+	md := metadata.Pairs("authorization", "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOiJURVNUVVNFUiIsImlhdCI6MTYwNDIyOTQ4MCwiaXNzIjoiQXJ0ZW1pcyJ9.MG8KqiaGERU4VONXJvnVxlwV17aRlSN4JoFU57Kz5EM")
 	nCtx := metautils.NiceMD(md).ToOutgoing(ctx)
 
 	r, err := c.GetEventsInRange(nCtx, &pb.GetEventsInRangeRequest{

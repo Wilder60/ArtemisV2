@@ -3,13 +3,12 @@ package web
 import (
 	"net/http"
 
+	"github.com/Wilder60/ArtemisV2/Calendar/internal/logger"
 	"github.com/Wilder60/ArtemisV2/Calendar/internal/middleware"
-
 	"github.com/Wilder60/ArtemisV2/Calendar/internal/adapter"
 	"github.com/Wilder60/ArtemisV2/Calendar/internal/security"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/fx"
-	"go.uber.org/zap"
 )
 
 // New will return a default, engine with no handlers or middleware used for
@@ -19,7 +18,7 @@ func New() *gin.Engine {
 }
 
 // CreateEngine will take
-func CreateEngine(cal *adapter.Calendar, sec *security.Security, logger *zap.Logger, mid *middleware.HTTP) *gin.Engine {
+func CreateEngine(cal *adapter.Calendar, sec *security.Security, logger *logger.Zap, mid *middleware.HTTP) *gin.Engine {
 	engine := gin.Default()
 	engine.GET("key", func(ctx *gin.Context) {
 		token, err := sec.CreateToken("TESTUSER")
