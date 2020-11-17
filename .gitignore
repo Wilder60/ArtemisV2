@@ -11,3 +11,4 @@ dockerfile
 *.json
 *.firebaserc
 .terraform
+.venv

@@ -1,0 +1,6 @@
+{"level":"info","ts":1605448929.050163,"caller":"logger/zap.go:48","msg":"starting Service on port :8000"}
+{"level":"info","ts":1605448929.168157,"caller":"zap/grpclogger.go:73","msg":"[core]Subchannel Connectivity change to READY","system":"grpc","grpc_log":true}
+{"level":"info","ts":1605448929.1682308,"caller":"zap/grpclogger.go:73","msg":"[core]Channel Connectivity change to READY","system":"grpc","grpc_log":true}
+{"level":"info","ts":1605448961.3018124,"caller":"zap/options.go:203","msg":"finished unary call with code OK","grpc.start_time":"2020-11-15T09:02:41-05:00","grpc.request.deadline":"2020-11-15T09:02:50-05:00","system":"grpc","span.kind":"server","grpc.service":"CalendarService","grpc.method":"GetEventsInRange","peer.address":"[::1]:38698","grpc.code":"OK","grpc.time_ms":220.25999450683594}
+{"level":"info","ts":1605449097.2240953,"caller":"logger/zap.go:48","msg":"Shutdown signal received interrupt"}
+{"level":"info","ts":1605449097.2241664,"caller":"logger/zap.go:48","msg":"shutting down service"}

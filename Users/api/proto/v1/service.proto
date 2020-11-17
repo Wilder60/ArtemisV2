@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+option go_package = "Calendar/pkg/grpc/service";
+
+service CalendarService {
+    rpc GetUserInfo (GetUser) returns (UserInfo);
+    rpc Login (LoginRequest) returns (Empty);
+    rpc CreateUser (UserInfo) returns (Empty);
+    rpc ModifyUser (Empty) returns (Empty);
+    rpc DeleteUser (Empty) returns (Empty);
+}
+
+message GetUser {
+    string userID = 1;
+}
+
+message LoginRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message UserInfo {
+    // Login info
+    string email = 1;
+    string password = 2;
+    // User info
+    string firstname = 3;
+    string lastname = 4;
+    string birthday = 5;
+    string gender = 6;
+    string location = 7;
+    string language = 8;
+}
+
+message Empty {}
+
