@@ -5,7 +5,7 @@ from routes import users
 
 def make_app() -> tornado.web.Application:
     return tornado.web.Application([
-        (r"/users", users.UserHandler),
+        (r"/users", users.UserHandler, dict(None, None)),
     ])
 
 if __name__ == "__main__":

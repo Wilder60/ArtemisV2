@@ -13,7 +13,7 @@ class UserHandler(tornado.web.RequestHandler):
 
 
     def get(self):
-        self.db.hello()
+        self.db.get_user("")
         pass
 
     def post(self):
