@@ -1,13 +1,23 @@
 syntax = "proto3";
 
-option go_package = "Calendar/pkg/grpc/service";
+// What does this service handle???
+// 1. User Account
+//      a. Create an account
+//      b. Retrieve users account infos
+//      c. Update any user info
+//      d. Delete a user
+// 2. Log a user in
+// 3. Update a user password
+// 4. Handle a password reset event
 
-service CalendarService {
-    rpc GetUserInfo (GetUser) returns (UserInfo);
-    rpc Login (LoginRequest) returns (Empty);
-    rpc CreateUser (UserInfo) returns (Empty);
-    rpc ModifyUser (Empty) returns (Empty);
-    rpc DeleteUser (Empty) returns (Empty);
+service User {
+    rpc create_user (UserInfo) returns (Empty);
+    rpc get_user_info (GetUser) returns (UserInfo);
+    rpc modify_user (Empty) returns (Empty);
+    rpc delete_user (Empty) returns (Empty);
+
+    rpc login (LoginRequest) returns (Empty);
+    rpc update_password (PasswordUpdate) returns (Empty);
 }
 
 message GetUser {
@@ -27,9 +37,13 @@ message UserInfo {
     string firstname = 3;
     string lastname = 4;
     string birthday = 5;
-    string gender = 6;
-    string location = 7;
-    string language = 8;
+    string language = 6;
+}
+
+message PasswordUpdate {
+    string email = 1;
+    string currentpassword = 2;
+    string newpassword = 3;
 }
 
 message Empty {}
